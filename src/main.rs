@@ -3,5 +3,7 @@
 
 
 fn main() {
+
+    // Perform basic game startup processes
     println!("Hello, world!");
 }

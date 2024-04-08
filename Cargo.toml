@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 bevy = "0.13.2"
 serde = "1.0.197"
+sqlite = "0.34.0"
