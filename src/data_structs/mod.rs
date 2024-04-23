@@ -1,6 +1,6 @@
-/*  data_parsing module
-  This module is intended to centralize external data access and parsing functions
-  Specifically, SQLite queries and JSON files
+/*  data_struct module
+  This module is intended to centralize the definition and manipulation of data structs
+  Creating, Editing, Deleting should all be accessed through the setup here
 */
 
 // Most of the logic is performed within the specific sub-crates
