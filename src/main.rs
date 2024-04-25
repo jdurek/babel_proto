@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+mod data_structs;
+pub use data_structs::*;
 
 // Revamping the bevy project from scratch - going to try and focus more on doing subsystems one at a time, and combining them all later.
 
@@ -14,4 +16,9 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>){
     commands.spawn(camera);
 
 
+}
+
+
+fn main() {
+    
 }
