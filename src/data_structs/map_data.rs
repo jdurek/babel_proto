@@ -32,7 +32,7 @@ pub struct MapBase {
     pub dim_y: i32,
     pub tiles: Vec<Tile>,
     pub walls: Vec<Wall>,
-    pub textures: HashMap<String, String>,
+    // pub textures: HashMap<String, String>,
     // default_textures: TextureAtlas,
 }
 impl MapBase { 
@@ -67,23 +67,27 @@ impl MapBase {
 
 }
 
-// Global access to current map - only 1 map is loaded at a time
+// Global access to current map JSON data - only 1 map is loaded at a time
 #[derive(Resource, Serialize, Deserialize, Clone)]
 pub struct CurrMap {
-    // Map Data
+    // Map Data (JSON), READ_ONLY
+    // Player Data (JSON) - basically an overlay of the map data, to account for how much the player's explored, certain triggers like changes in terrain, etc...
+    // Map struct (Position to Entity)
 }
 impl CurrMap{
-    // Load Function
+    // Load Function (Loads in JSON, creates the entities, and populates the position lookup)
+    
     // Save Function
     // Read Function (If needed - ownership on resources is funny)
-    // Edit Function 
+    // Edit Function - Affects player data and entities. 
 }
 
 
-// Global access to Town Map - mostly to cache town and make it easier to update anytime (For example - giving NPCs a schedule)
+// Global access to Town Map JSON data - mostly to cache town and make it easier to update anytime (For example - giving NPCs a schedule)
 #[derive(Resource, Serialize, Deserialize, Clone)]
 pub struct TownMap {
     // Underlying Map data
+    // Player Data / Progress (Town changes based on progress)
     // NPC/Shop Data
     // Time Data
 }
@@ -95,3 +99,10 @@ impl TownMap{
     // Tick Function (Town will keep doing it's own thing)
     // Set Time (Could have townies scripted to do certain behaviors at times, so this helps to set it when we return to town)
 }
+
+
+#[derive(Component)]
+pub struct LoadedMap;
+
+#[derive(Component)]
+pub struct LoadedTownMap;

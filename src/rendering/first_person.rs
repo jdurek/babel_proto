@@ -13,6 +13,12 @@
 
 use bevy::prelude::*;
 
+/*
+    General flow - 
+        Fetch the JSON resource, AND entities with the CurrMap resource (Or Town Map resource). Also fetch the coordinate map resource for current map
+        Begin loading in sprites, walls, etc...
+*/
+
 // Render the current area - uses what's currently loaded in
 pub fn render_region(mut commands: Commands, map_data: JSON) {
     // Iterate over each grid, and create a transparent 'cube'
