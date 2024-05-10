@@ -10,6 +10,15 @@ use bevy::prelude::*;
 use serde::*;
 
 
+
+// TODO - figure out if I want to move this component elsewhere, since it's not exclusive to maps
+// Note - This requires Eq and Hash for the HashMap to work
+#[derive(Component, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub struct Position{
+    x: i32,
+    y: i32,
+}
+
 // Basic wall enum (Can modify the definition of Walls later)
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States, Serialize, Deserialize)]
 pub enum Wall {
@@ -37,6 +46,16 @@ pub struct MapBase {
     // default_textures: TextureAtlas,
 }
 impl MapBase { 
+    // Initialization function - creates vectors with blank tiles and no walls
+    fn new(width: i32, height: i32) -> MapBase {
+        MapBase { 
+            dim_x: (width), 
+            dim_y: (height), 
+            tiles: (vec![Tile {walls:[false,false,false,false],}; (width* height) as usize]), 
+            walls: (vec![Wall::NoWall; ((width+1)* height + (height+1) * width) as usize]),
+        }
+    }
+
     // Helper functions to make accessing and handling data easier
     fn get_tile(&self, x: i32, y:i32) -> Tile {
         self.tiles[self.get_tile_index(x, y)]
@@ -75,6 +94,7 @@ pub struct CurrMap {
     map_data: MapBase,
     // Player Data (JSON) - basically an overlay of the map data, to account for how much the player's explored, certain triggers like changes in terrain, etc...
     // Map struct (Position to Entity)
+    entity_lookup: HashMap<Position, Entity>,
 }
 impl CurrMap{
     // Initialization function
@@ -96,7 +116,19 @@ pub fn create_position_lookup(
     query: Query<Entity, With<LoadedMap>>,
 
 ){
-    
+    // Initialize a basic hashmap so we can just feed in the Position and link it to an entity
+
+    // Iterate over all results in the query and fetch the Position Component, then write to the CurrMap resource's hashmap the lookup (Entity address in mem)
+    // TODO - refine the query to be LoadedMap, and Position - 
+    //  Loaded Map contains tiles, walls, sprites, etc...
+    for tile in &query{
+        
+    }
+    // for y in 0..mg.map_data.dim_y {
+    //     for x in 0..mg.map_data.dim_x {
+    //         // 
+    //     }
+    // }
 }
 
 
@@ -104,6 +136,7 @@ pub fn create_position_lookup(
 #[derive(Resource, Serialize, Deserialize, Clone)]
 pub struct TownMap {
     // Underlying Map data
+    map_data: MapBase,
     // Player Data / Progress (Town changes based on progress)
     // NPC/Shop Data
     // Time Data
