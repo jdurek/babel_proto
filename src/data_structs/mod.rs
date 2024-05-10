@@ -6,6 +6,8 @@
 // Most of the logic is performed within the specific sub-crates
 // This module mainly serves as a central access to data-parsing
 
+#![allow(unused)]
+
 use bevy::prelude::*;
 use serde::*;
 

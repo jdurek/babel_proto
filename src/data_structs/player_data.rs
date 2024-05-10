@@ -3,5 +3,7 @@
     
 */
 
+#![allow(unused)]
+
 use bevy::prelude::*;
 use sqlite::*; 

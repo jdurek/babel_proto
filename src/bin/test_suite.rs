@@ -3,6 +3,7 @@
   Due to the nature of Bevy and ECS, the tests will be fairly limited. General idea is to just make sure nothing breaks.
 */
 
+#![allow(unused)]
 
 mod prelude {
 

@@ -3,6 +3,7 @@
   Handles fetching map data and storing into the project's map_data struct
   Right now, maps are planned to be stored as a JSON through Serde
 */
+#![allow(unused)]
 
 use std::collections::HashMap;
 use bevy::prelude::*;
@@ -67,23 +68,39 @@ impl MapBase {
 
 }
 
-// Global access to current map JSON data - only 1 map is loaded at a time
+// Global resource access to current map JSON data - only 1 map is loaded at a time
 #[derive(Resource, Serialize, Deserialize, Clone)]
 pub struct CurrMap {
     // Map Data (JSON), READ_ONLY
+    map_data: MapBase,
     // Player Data (JSON) - basically an overlay of the map data, to account for how much the player's explored, certain triggers like changes in terrain, etc...
     // Map struct (Position to Entity)
 }
 impl CurrMap{
-    // Load Function (Loads in JSON, creates the entities, and populates the position lookup)
+    // Initialization function
+    // Load Function (Loads in JSON into map_data, creates the entities, and populates the position lookup)
     
     // Save Function
     // Read Function (If needed - ownership on resources is funny)
     // Edit Function - Affects player data and entities. 
 }
 
+// Due to how entities are accessed, the Map for position to entities can't be defined in impl CurrMap
+// The following functions are intended to be used only for CurrMap setup. 
 
-// Global access to Town Map JSON data - mostly to cache town and make it easier to update anytime (For example - giving NPCs a schedule)
+// Populates the Map struct (Position to Entity) linking for quicker lookup of which entity to check when checking the current tile
+// TODO - figure out the best way to handle the references created in this, and ensue ownership doesn't bite me
+pub fn create_position_lookup(
+    mut commands: Commands, 
+    mg: Res<CurrMap>,
+    query: Query<Entity, With<LoadedMap>>,
+
+){
+    
+}
+
+
+// Global resource access to Town Map JSON data - mostly to cache town and make it easier to update anytime (For example - giving NPCs a schedule)
 #[derive(Resource, Serialize, Deserialize, Clone)]
 pub struct TownMap {
     // Underlying Map data

@@ -2,6 +2,8 @@ use bevy::prelude::*;
 
 mod data_structs;
 pub use data_structs::*;
+mod rendering;
+pub use rendering::*;
 
 // Revamping the bevy project from scratch - going to try and focus more on doing subsystems one at a time, and combining them all later.
 
