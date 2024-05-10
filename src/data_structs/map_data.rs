@@ -47,7 +47,7 @@ pub struct MapBase {
 }
 impl MapBase { 
     // Initialization function - creates vectors with blank tiles and no walls
-    fn new(width: i32, height: i32) -> MapBase {
+    pub fn new(width: i32, height: i32) -> MapBase {
         MapBase { 
             dim_x: (width), 
             dim_y: (height), 
@@ -57,26 +57,26 @@ impl MapBase {
     }
 
     // Helper functions to make accessing and handling data easier
-    fn get_tile(&self, x: i32, y:i32) -> Tile {
+    pub fn get_tile(&self, x: i32, y:i32) -> Tile {
         self.tiles[self.get_tile_index(x, y)]
     }
 
     // Given a X/Y coordinate, update the tile data at said coordinate
-    fn update_tile(&mut self, t: Tile, index: usize){
+    pub fn update_tile(&mut self, t: Tile, index: usize){
         self.tiles[index as usize] = t;
     }
     // Given a wall index (Use helper function), update the wall value
-    fn update_wall(&mut self, w: Wall, index: usize) {
+    pub fn update_wall(&mut self, w: Wall, index: usize) {
         self.walls[index] = w;
     }
 
     // Given a coordinate, obtain the tile index (usize)
-    fn get_tile_index(&self, x: i32, y: i32) -> usize {
+    pub fn get_tile_index(&self, x: i32, y: i32) -> usize {
         (y * self.dim_y + x) as usize
     }
 
     // Given a coordinate, obtain the 4 wall indexes (usize)
-    fn get_wall_index(&self, x:i32, y:i32) -> [usize; 4] {
+    pub fn get_wall_index(&self, x:i32, y:i32) -> [usize; 4] {
         let bottom = y * (self.dim_y + self.dim_x + 1) + x;
         let left = y * (self.dim_y + self.dim_x + 1) + self.dim_x + x;
         let right = left + 1;
@@ -93,11 +93,17 @@ pub struct CurrMap {
     // Map Data (JSON), READ_ONLY
     map_data: MapBase,
     // Player Data (JSON) - basically an overlay of the map data, to account for how much the player's explored, certain triggers like changes in terrain, etc...
-    // Map struct (Position to Entity)
+    // Map struct (Position to Entity), for quicker lookup if we need to update/edit a tile entity
     entity_lookup: HashMap<Position, Entity>,
 }
 impl CurrMap{
     // Initialization function
+    pub fn new(base_map: MapBase) -> CurrMap{
+        CurrMap {
+            map_data: base_map,
+            entity_lookup: HashMap::new(),
+        }
+    }
     // Load Function (Loads in JSON into map_data, creates the entities, and populates the position lookup)
     
     // Save Function

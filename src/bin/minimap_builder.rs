@@ -1,0 +1,55 @@
+/*
+  Minimap Builder - a helper tool used to help visualize a BaseMap struct and edit it as needed
+*/
+
+#![allow(unused)]
+
+use bevy::render::{camera, view::RenderLayers};
+
+mod prelude {
+    pub use bevy::prelude::*;
+    pub use serde::*;
+    pub use babel_proto::data_structs::map_data::*; 
+}
+
+use prelude::*;
+
+
+#[derive(Component)]
+struct MapCamera;
+
+fn camera_setup(mut commands: Commands){
+    let mut camera = Camera2dBundle::default();
+    camera.projection.scale = 0.5;
+    
+    // Camera starts pointed at 0,0 coordinate (Middle of screen)
+    // camera.transform.translation.x += 1280.0 / 4.0;
+    // camera.transform.translation.y += 720.0 / 4.0;
+    
+    commands.spawn((camera, MapCamera, RenderLayers::from_layers(&[0, 2])));
+}
+
+// Simply populates the CurrMap resource with a default map of 16x16 - can also load a default one from memory here if desired. 
+fn init_resources(mut commands: Commands){
+    let base_map = MapBase::new(16,16);
+    let curr_map = CurrMap::new(base_map);
+    commands.insert_resource(curr_map);
+}
+
+fn main() {
+    App::new()
+    .add_plugins(DefaultPlugins
+        .set(WindowPlugin{
+            primary_window: Some(Window{ 
+                title: "Map Builder".to_string(),
+                resolution: (1024 as f32, 720 as f32).into(),  // TODO - change this later for custom resolution (Or update it on the fly)
+                ..Default::default()
+            }),
+            ..Default::default()
+        }))
+    .add_systems(Startup, camera_setup)
+    .add_systems(Startup, init_resources)
+    
+    .run();
+}
+
