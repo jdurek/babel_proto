@@ -1,5 +1,5 @@
 /*
-  Minimap Builder - a helper tool used to help visualize a BaseMap struct and edit it as needed
+  Minimap Builder - a helper tool used to help visualize a BaseMap struct and edit it as neededs
 */
 
 #![allow(unused)]
@@ -10,6 +10,8 @@ mod prelude {
     pub use bevy::prelude::*;
     pub use serde::*;
     pub use babel_proto::data_structs::map_data::*; 
+    pub use babel_proto::rendering::minimap::*;
+    pub use babel_proto::rendering::minimap_edit::*;
 }
 
 use prelude::*;
@@ -33,7 +35,9 @@ fn camera_setup(mut commands: Commands){
 fn init_resources(mut commands: Commands){
     let base_map = MapBase::new(16,16);
     let curr_map = CurrMap::new(base_map);
+    let zoom = ZoomLevel { zoom: 16 };
     commands.insert_resource(curr_map);
+    commands.insert_resource(zoom);
 }
 
 fn main() {
@@ -49,6 +53,13 @@ fn main() {
         }))
     .add_systems(Startup, camera_setup)
     .add_systems(Startup, init_resources)
+
+    .init_state::<MapBuildState>()
+
+    // Despawn previous render and build new one
+    // .add_systems(OnEnter(MapBuildState::RenderMap))
+    .add_systems(Update, (draw_2d_map, render_complete).run_if(in_state(MapBuildState::RenderMap)))
+    .add_systems(Update, mouse_behavior.run_if(in_state(MapBuildState::Drawing)))
     
     .run();
 }

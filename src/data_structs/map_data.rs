@@ -15,8 +15,14 @@ use serde::*;
 // Note - This requires Eq and Hash for the HashMap to work
 #[derive(Component, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Position{
-    x: i32,
-    y: i32,
+    pub x: i32,
+    pub y: i32,
+    pub z: i32,
+}
+
+#[derive(Resource, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub struct ZoomLevel{
+    pub zoom: i32,
 }
 
 // Basic wall enum (Can modify the definition of Walls later)
@@ -91,10 +97,10 @@ impl MapBase {
 #[derive(Resource, Serialize, Deserialize, Clone)]
 pub struct CurrMap {
     // Map Data (JSON), READ_ONLY
-    map_data: MapBase,
+    pub map_data: MapBase,
     // Player Data (JSON) - basically an overlay of the map data, to account for how much the player's explored, certain triggers like changes in terrain, etc...
     // Map struct (Position to Entity), for quicker lookup if we need to update/edit a tile entity
-    entity_lookup: HashMap<Position, Entity>,
+    pub entity_lookup: HashMap<Position, Entity>,
 }
 impl CurrMap{
     // Initialization function

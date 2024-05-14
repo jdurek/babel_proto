@@ -15,6 +15,7 @@ pub mod dialogue;
 pub mod first_person;
 pub mod minimap;
 pub mod game_menus;
+pub mod minimap_edit;
 
 pub use minimap::*;
 
