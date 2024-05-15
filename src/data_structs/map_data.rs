@@ -66,7 +66,7 @@ impl MapBase {
             dim_x: (width), 
             dim_y: (height), 
             tiles: (vec![Tile {walls:[false,false,false,false],}; (width* height) as usize]), 
-            walls: (vec![Wall::NoWall; ((width+1)* height + (height+1) * width) as usize]),
+            walls: (vec![Wall {state: WallState::NoWall, passable:false}; ((width+1)* height + (height+1) * width) as usize]),
         }
     }
 
