@@ -11,7 +11,7 @@ use crate::data_structs::map_data::*;
 use crate::rendering::minimap::*;
 
 
-// Simple states for the map_builder loop - only needed by the map_builder tool at the moment
+// Simple states for the map_builder loop - only needed by the map_builder tool at the moment, which is why it's only kept in here
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
 pub enum MapBuildState {
     #[default]
@@ -85,16 +85,40 @@ pub fn mouse_behavior(
                 // Compute dist value - we can assume it will always be a right angle triangle
                 let dist = ((world_position.x - pos.x as f32).abs().powi(2) + (world_position.y - pos.y as f32).abs().powi(2)).sqrt();
 
-                transf.scale.x = dist;
-                transf.translation.x = (pos.x as f32 + world_position.x)/ 2.;
-                transf.translation.y = (pos.y as f32 + world_position.y)/ 2.;
+
+                // Update the wall sprite - caps length to match current scaling of the map
+                if dist < scale {
+                    transf.scale.x = dist;
+                    transf.translation.x = (pos.x as f32 + world_position.x)/ 2.;
+                    transf.translation.y = (pos.y as f32 + world_position.y)/ 2.;
+                }
+                else {  
+                    transf.scale.x = scale;
+                    transf.translation.x = pos.x as f32 + (theta.cos() * scale)/ 2.;
+                    transf.translation.y = pos.y as f32 + (theta.sin() * scale)/ 2.;
+                }
                 transf.rotation = Quat::from_rotation_z(theta);
             }
         }
 
     }
+
+
+    // This section is outside of the IF block to account for the mouse being released while not in valid bounds
+    if mouse.just_released(MouseButton::Left){
+        for line in draw_line.iter(){
+            commands.entity(line.3).despawn();
+        }
+    }
 }
 
+
+/*
+    State-changing functions - These functions simply change states to help trigger certain behaviors (On Enter and On Exit)
+    
+*/
+
+// From Rendering state to Drawing state
 pub fn render_complete(
     mut commands: Commands,
     mut next_state: ResMut<NextState<MapBuildState>>,
@@ -102,7 +126,16 @@ pub fn render_complete(
     next_state.set(MapBuildState::Drawing);
 }
 
+// From any state to Rendering
+pub fn trigger_render(
+    mut commands: Commands,
+    mut next_state: ResMut<NextState<MapBuildState>>,
+){
+    next_state.set(MapBuildState::RenderMap);
+}
 
+
+// Function to draw wall - needs Commands, coordinates - may also add the 'wall edit' to this, to keep the logic clumped together, but ownership will be fun. 
 pub fn draw_wall(
     mut commands: Commands,
     q_window: Query<&Window, With<PrimaryWindow>>,

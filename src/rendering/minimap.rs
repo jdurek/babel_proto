@@ -23,8 +23,8 @@ pub fn draw_2d_map_from_json(mut commands: Commands, map: MapBase){
 }
 
 // Function to render the current map to a 2D camera
-pub fn draw_2d_map(mut commands: Commands, map: Res<CurrMap>){
-
+pub fn draw_2d_map(mut commands: Commands, map: Res<CurrMap>, zoom: Res<ZoomLevel>){
+    let grid_scale = zoom.zoom as f32;
     // This section draws out the grid (Tiles)
     for y in 0..map.map_data.dim_y {
         for x in 0..map.map_data.dim_x {
@@ -35,8 +35,8 @@ pub fn draw_2d_map(mut commands: Commands, map: Res<CurrMap>){
                 sprite: Sprite { color: Color::TURQUOISE, custom_size: (Some(Vec2::new(1.0,1.0))), ..Default::default() },
                 visibility: Visibility::Visible,
                 transform: Transform {
-                    translation: Vec2::new(x as f32, y as f32).extend(0.0),
-                    scale: Vec3::new(1., 1., 0.),
+                    translation: Vec2::new(x as f32 * grid_scale, y as f32 * grid_scale).extend(0.0),
+                    scale: Vec3::new(grid_scale - 1., grid_scale - 1., 0.),
                     ..default()
                 },
                 ..Default::default()
