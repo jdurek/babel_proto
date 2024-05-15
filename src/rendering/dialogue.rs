@@ -1,6 +1,6 @@
 /* dialogue.rs
     System for handling rendering and processing of dialogue data
-    Displays onto a 2D camera specific to itself and the menus
+    Displays onto 2D camera, could treat like a viewport section? 
 */
 
 #![allow(unused_variables)]

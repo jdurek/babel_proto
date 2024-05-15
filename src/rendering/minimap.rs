@@ -47,7 +47,20 @@ pub fn draw_2d_map(mut commands: Commands, map: Res<CurrMap>, zoom: Res<ZoomLeve
         }
     }
 
-    // This section draws out the wall lines (Walls)
+    // This section draws out the wall lines (Walls) - does 2 passes (One for horizontal walls, one for vertical)
+    for x in 0..map.map_data.dim_x + 1 {
+        for h in 0..map.map_data.dim_x {
+            // Index in the wall vector is x + h*(x + dim_y + 1)
+            let indx = (h + x*(map.map_data.dim_x + map.map_data.dim_y + 1)) as usize;
+        }
+    }
+    
+    for y in 0..map.map_data.dim_y {
+        for v in 0..map.map_data.dim_y + 1 {
+            // Index in the wall vector is dim_x + v + y*(x+y+1)
+            let indx = (map.map_data.dim_x + v + y*(map.map_data.dim_x + map.map_data.dim_y + 1)) as usize;
+        }
+    }
 
 }
 
