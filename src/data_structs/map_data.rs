@@ -27,13 +27,21 @@ pub struct ZoomLevel{
 
 // Basic wall enum (Can modify the definition of Walls later)
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States, Serialize, Deserialize)]
-pub enum Wall {
+pub enum WallState {
     #[default]
     NoWall,
     Solid,
     Transparent,
     Door,
     Shortcut,
+}
+
+#[derive(Serialize, Deserialize, Copy, Clone)]
+pub struct Wall {
+    pub state: WallState,
+    pub passable: bool,        // Tiles have a shortcut to this - use in conjunction with WallState on certain things like Locked doors?
+    // TODO - figure out how I want to attach certain behaviors like shortcuts being one-way until used once, or locked doors and which key goes to it?
+    //      Was thinking components can help, but I need to be able to make those components, and update the map data walls when we reach that point? Needs brainstorming.
 }
 
 #[derive(Serialize, Deserialize, Copy, Clone)]
