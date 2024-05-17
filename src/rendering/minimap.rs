@@ -11,11 +11,19 @@ use bevy::prelude::*;
 use crate::data_structs::map_data::{self, *}; 
 
 
+// TODO - figure out if I want to move DragLine into the minimap_edit, since it's only used by map builder at the moment
 #[derive(Component)]
 pub struct DragLine;
 
 #[derive(Component)]
 pub struct MapCellSprite;
+
+// Used to shift around the (0,0) position (All tiles spawn to the upper right of 0,0)
+#[derive(Resource)]
+pub struct Center{
+    x: f32,
+    y: f32,
+}
 
 // Function to render a map JSON to a 2D camera
 pub fn draw_2d_map_from_json(mut commands: Commands, map: MapBase){
@@ -23,7 +31,11 @@ pub fn draw_2d_map_from_json(mut commands: Commands, map: MapBase){
 }
 
 // Function to render the current map to a 2D camera
-pub fn draw_2d_map(mut commands: Commands, map: Res<CurrMap>, zoom: Res<ZoomLevel>){
+pub fn draw_2d_map(
+    mut commands: Commands, 
+    map: Res<CurrMap>, 
+    zoom: Res<ZoomLevel>
+){
     let grid_scale = zoom.zoom as f32;
     // This section draws out the grid (Tiles)
     for y in 0..map.map_data.dim_y {

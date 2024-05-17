@@ -21,7 +21,45 @@ pub enum MapBuildState {
     Drawing,
 }
 
-// Initializes behavior based on mouse cursor location and which button was pressed
+// Cursor states to change the behavior of the mouse clicks
+#[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
+pub enum MapCursorMode {
+    #[default]
+    Wall,   // Wall-drawing behavior
+    Drag,   // Two ways to think of this - dragging stuff like mobs/entities, or sliding the map to change the 0,0 point
+    Paint,  // Apply generic behavior to tile (Such as water, terrain type, etc...)
+}
+
+// Logic for handling all mouse input during map builder's main drawing loop
+pub fn mouse_input(
+    mut commands: Commands,
+    q_window: Query<&Window, With<PrimaryWindow>>,
+    mouse: Res<ButtonInput<MouseButton>>, 
+    map_cam: Query<(&Camera, &GlobalTransform)>,
+    mut map: ResMut<CurrMap>,
+    zoom: Res<ZoomLevel>,
+    mut draw_line: Query<(&DragLine, &mut Transform, &mut Position, Entity)>,
+    mut center: ResMut<Center>,
+){
+    // First, check to see if the cursor position is on any menu buttons (Save, Load, Mode change)
+    // If it is, handle it accordingly (Hover-over, left-click)
+
+    // Otherwise, check what mode we're in and handle the mouse behavior by throwing to helper functions that are meant to handle said modes
+    // match cursorMode {
+    //     MapCursorMode::Wall => {
+
+    //     }
+    //     MapCursorMode::Drag => {
+
+    //     }
+    //     _ => {
+
+    //     }
+    // }
+
+}
+
+// Original mouse_behavior
 pub fn mouse_behavior(
     mut commands: Commands,
     q_window: Query<&Window, With<PrimaryWindow>>,
@@ -30,6 +68,7 @@ pub fn mouse_behavior(
     mut map: ResMut<CurrMap>,
     zoom: Res<ZoomLevel>,
     mut draw_line: Query<(&DragLine, &mut Transform, &mut Position, Entity)>,
+    mut center: ResMut<Center>,
 ){
     // Initialize camera and position info
     let (camera, camera_transform) = map_cam.single();
