@@ -36,8 +36,10 @@ fn init_resources(mut commands: Commands){
     let base_map = MapBase::new(16,16);
     let curr_map = CurrMap::new(base_map);
     let zoom = ZoomLevel { zoom: 16 };
+    let center = Center {x: -64., y: -64.};
     commands.insert_resource(curr_map);
     commands.insert_resource(zoom);
+    commands.insert_resource(center);
 }
 
 fn main() {

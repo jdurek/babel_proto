@@ -21,8 +21,8 @@ pub struct MapCellSprite;
 // Used to shift around the (0,0) position (All tiles spawn to the upper right of 0,0)
 #[derive(Resource)]
 pub struct Center{
-    x: f32,
-    y: f32,
+    pub x: f32,
+    pub y: f32,
 }
 
 // Function to render a map JSON to a 2D camera
@@ -34,7 +34,8 @@ pub fn draw_2d_map_from_json(mut commands: Commands, map: MapBase){
 pub fn draw_2d_map(
     mut commands: Commands, 
     map: Res<CurrMap>, 
-    zoom: Res<ZoomLevel>
+    zoom: Res<ZoomLevel>,
+    center: Res<Center>,
 ){
     let grid_scale = zoom.zoom as f32;
     // This section draws out the grid (Tiles)
@@ -47,7 +48,7 @@ pub fn draw_2d_map(
                 sprite: Sprite { color: Color::TURQUOISE, custom_size: (Some(Vec2::new(1.0,1.0))), ..Default::default() },
                 visibility: Visibility::Visible,
                 transform: Transform {
-                    translation: Vec2::new(x as f32 * grid_scale, y as f32 * grid_scale).extend(0.0),
+                    translation: Vec2::new(x as f32 * grid_scale + center.x, y as f32 * grid_scale + center.y).extend(0.0),
                     scale: Vec3::new(grid_scale - 1., grid_scale - 1., 0.),
                     ..default()
                 },

@@ -89,6 +89,7 @@ pub fn mouse_behavior(
         let mut start_y: f32 = 0.;
         
         // Mouse is clicked - check if we're near a valid corner and spawn in the sprite if we are
+        // TODO - restrict it to only valid wall positions (Use Center, 0,0, and dim X/Y to bound this)
         if mouse.just_pressed(MouseButton::Left) {
             if(loc_x / scale < 0.2 || loc_x / scale > 0.8) &&
               (loc_y / scale < 0.2 || loc_y / scale > 0.8)
