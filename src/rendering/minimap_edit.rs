@@ -30,6 +30,9 @@ pub enum MapCursorMode {
     Paint,  // Apply generic behavior to tile (Such as water, terrain type, etc...)
 }
 
+#[derive(Component)]
+pub struct SelectedOption;
+
 // Logic for handling all mouse input during map builder's main drawing loop
 pub fn mouse_input(
     mut commands: Commands,
@@ -42,7 +45,7 @@ pub fn mouse_input(
     mut center: ResMut<Center>,
 ){
     // First, check to see if the cursor position is on any menu buttons (Save, Load, Mode change)
-    // If it is, handle it accordingly (Hover-over, left-click)
+    // If it is, handle it accordingly (Potentially hover-over, left-click, etc...)
 
     // Otherwise, check what mode we're in and handle the mouse behavior by throwing to helper functions that are meant to handle said modes
     // match cursorMode {
@@ -154,6 +157,70 @@ pub fn mouse_behavior(
 
 
 /*
+    GUI Menu section - This is mainly for rendering and interactivity of the GUI menu, along with defining a few constants. 
+*/
+
+const NORMAL_BUTTON: Color = Color::GRAY;
+const HOVERED_BUTTON: Color = Color::DARK_GRAY;
+const HOVERED_PRESSED: Color = Color::DARK_GREEN;
+const PRESSED_BUTTON: Color = Color::GREEN;
+
+
+// This function draws the Menu UI/UX
+pub fn draw_mb_menu(
+    mut commands: Commands, 
+    asset_server: Res<AssetServer>,
+){
+    // TODO - CSS shenagians to set it all up. Can reuse older one from other project as a starting point? 
+}
+
+// This function handles button interactivity (Updating the colors based on the 4 consts and what's being done)
+// TODO - relearn the selected option bit
+pub fn menu_button_system(
+    mut interact_query: Query<
+        (&Interaction, &mut BackgroundColor, Option<&SelectedOption>),
+        (Changed<Interaction>, With<Button>),
+    >,
+) {
+    for (interaction, mut color, selected) in &mut interact_query {
+        *color = match(*interaction, selected) {
+            // Match to the different interaction cases - need to define the colors used in advance
+            (Interaction::Pressed, _) | (Interaction::None, Some(_)) => PRESSED_BUTTON.into(),
+            (Interaction::Hovered, Some(_)) => HOVERED_PRESSED.into(),
+            (Interaction::Hovered, None) => HOVERED_BUTTON.into(),
+            (Interaction::None, None) => NORMAL_BUTTON.into(),
+        }
+    }
+}
+
+// Plugin for handling state-changes triggered by the menu GUI
+// Integrates 3 functions - save_gui when we enter SavingMap (on clicking the save button), save_complete to exit the state, and save_cleanup in case something needs to be handled
+pub fn mb_gui_plugin(app: &mut App){
+    app
+        .add_systems(OnEnter(MapBuildState::SavingMap),save_gui)
+        .add_systems(OnEnter(MapBuildState::SavingMap),save_complete.after(save_gui))
+        .add_systems(OnExit(MapBuildState::SavingMap), save_cleanup)
+    ;
+}
+
+pub fn save_gui(
+    mut commands: Commands,
+    map_data: Res<CurrMap>,
+){
+    // TODO - add RFD to cargo, so we can use Windows built-in file-browser for name/path navigation
+}
+
+pub fn save_cleanup(
+    mut commands: Commands,
+){
+    // Currently empty - can adjust it to handle something like a 'Last Saved' notification or handling misc cleanup
+}
+
+
+
+
+
+/*
     State-changing functions - These functions simply change states to help trigger certain behaviors (On Enter and On Exit)
     
 */
@@ -174,6 +241,13 @@ pub fn trigger_render(
     next_state.set(MapBuildState::RenderMap);
 }
 
+// From SavingMap state to drawing state
+pub fn save_complete(
+    mut commands: Commands,
+    mut next_state: ResMut<NextState<MapBuildState>>,
+){
+    next_state.set(MapBuildState::Drawing);
+}
 
 // Function to draw wall - needs Commands, coordinates - may also add the 'wall edit' to this, to keep the logic clumped together, but ownership will be fun. 
 pub fn draw_wall(
