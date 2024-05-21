@@ -172,6 +172,49 @@ pub fn draw_mb_menu(
     asset_server: Res<AssetServer>,
 ){
     // TODO - CSS shenagians to set it all up. Can reuse older one from other project as a starting point? 
+
+    // Map Builder Button Styling: 
+    let btn_style = Style{
+        width: Val::Px(150.),
+        height: Val::Px(50.),
+        margin: UiRect::all(Val::Px(20.0)),
+        align_items: AlignItems::Center,
+        ..default()
+    };
+    let btn_icon_style = Style{
+        width: Val::Px(30.),
+        position_type: PositionType::Absolute,
+        left: Val::Px(10.),
+        ..default()
+    };
+    let btn_text_style = TextStyle{
+        font_size: 20.0,
+        color: Color::BLACK,
+        ..default()
+    };
+
+    // Spawns in the menu - Root contains N buttons, button nodes contain text and possibly images
+    commands
+        .spawn(NodeBundle{
+            style: Style {
+                align_items: AlignItems::Center,
+                ..Default::default()
+            },
+            background_color: Color::SEA_GREEN.into(),
+            ..Default::default()
+        })
+        .with_children(|f|{
+            f.spawn(NodeBundle
+                {
+                    ..Default::default()
+                }
+            ).with_children(|f|{f.spawn(NodeBundle{..Default::default()});});
+        })
+           
+    ;
+
+
+
 }
 
 // This function handles button interactivity (Updating the colors based on the 4 consts and what's being done)
