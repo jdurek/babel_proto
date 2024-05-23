@@ -21,13 +21,47 @@ use crate::data_structs::*;
         Begin loading in sprites, walls, etc...
 */
 
-// Render the current area - uses what's currently loaded in
-pub fn render_region(mut commands: Commands, map_data: MapBase) {
-    // Iterate over each grid, and create a transparent 'cube'
-    // Apply a texture to the floor, and to the walls based on the JSON/struct data
+// Render the current area - tries to optimize by 'hiding' things that you can't currently see if necessary
+pub fn render_region(
+    mut commands: Commands,
+    map_data: Res<CurrMap>) {
+    // Iterate over each grid, render it to the 'world' and figure it out from there
+
 
 }
 
+// Rendering function - renders the entire map (without any optimizations)
+pub fn render_full_map(
+    mut commands: Commands,
+    map_data: Res<CurrMap>,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
+
+) {
+    // Do two iterations (One for the tiles, then one for the walls)
+    // For now, each wall will be a rectangle, as will each floor 
+    // I plan to convert floor into a tilemesh or something similar later to make it just one plane
+    let dim_x = map_data.map_data.dim_x;
+    let dim_y = map_data.map_data.dim_y;
+
+    // Floor tile loop
+    for x in 0..dim_x {
+        for y in 0..dim_y {
+            commands.spawn(PbrBundle {
+                mesh: meshes.add(Rectangle::new(3.8, 3.8)),
+                material: materials.add(Color::rgb_u8(124, 144, 255)),
+                transform: Transform::from_xyz(4.0 * x as f32, 0.0, 4.0 * y as f32)
+                                    .with_rotation(Quat::from_rotation_y(90.)),
+                
+                ..default()
+            });
+        
+        }
+    }
+
+    // Wall loop
+
+}
 
 // Handle shifting of our 'coordinates' by moving the 3D camera
 // Supports moving 4(6) ways - Left, Right, Forwards, Backwards (Up, Down)
