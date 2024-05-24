@@ -4,7 +4,10 @@
 
 #![allow(unused)]
 
+use std::thread::spawn;
+
 use bevy::render::{camera, view::RenderLayers};
+// use bevy_fly_camera::{FlyCamera, FlyCameraPlugin};
 
 mod prelude {
     pub use bevy::prelude::*;
@@ -25,9 +28,10 @@ fn camera_setup(mut commands: Commands){
     let mut camera = Camera3dBundle::default();
 
     commands.spawn(Camera3dBundle {
-        transform: Transform::from_xyz(0., 0., 0.).looking_at(Vec3::ZERO, Vec3::Y),
+        transform: Transform::from_xyz(0.0, 60., -12.0).looking_at(Vec3::new(0., 1., 0.), Vec3::Y),
         ..default()
     });
+    // .with(FlyCamera::default());
 
     
     
@@ -45,6 +49,7 @@ fn init_resources(mut commands: Commands){
     commands.insert_resource(center);
 }
 
+
 fn main() {
     App::new()
     .add_plugins(DefaultPlugins
@@ -56,6 +61,7 @@ fn main() {
             }),
             ..Default::default()
         }))
+    // .add_plugin(FlyCameraPlugin)
     .add_systems(Startup, camera_setup)
     .add_systems(Startup, init_resources)
 

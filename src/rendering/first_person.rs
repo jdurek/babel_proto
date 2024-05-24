@@ -49,9 +49,9 @@ pub fn render_full_map(
         for y in 0..dim_y {
             commands.spawn(PbrBundle {
                 mesh: meshes.add(Rectangle::new(3.8, 3.8)),
-                material: materials.add(Color::rgb_u8(124, 144, 255)),
+                material: materials.add(Color::rgb_u8(200, 200, 0)),
                 transform: Transform::from_xyz(4.0 * x as f32, 0.0, 4.0 * y as f32)
-                                    .with_rotation(Quat::from_rotation_y(90.)),
+                                    .with_rotation(Quat::from_rotation_y(135.)),
                 
                 ..default()
             });
