@@ -25,13 +25,16 @@ struct ViewCamera;
 
 fn camera_setup(mut commands: Commands){
     // TODO - adjust the 3D camera initialization, as this'll be the first time using this camera variety
-    let mut camera = Camera3dBundle::default();
+    // let mut camera = Camera3dBundle::default();
 
-    commands.spawn(Camera3dBundle {
-        transform: Transform::from_xyz(0.0, 60., -12.0).looking_at(Vec3::new(0., 1., 0.), Vec3::Y),
-        ..default()
-    });
-    // .with(FlyCamera::default());
+    commands.spawn((
+        Camera3dBundle {
+            transform: Transform::from_xyz(0.0, 10., -12.0).looking_at(Vec3::new(0., 1., 0.), Vec3::Y),
+            ..default()
+        },
+        FlyCamera{..default()},
+    ));
+    
 
     
     
@@ -61,11 +64,11 @@ fn main() {
             }),
             ..Default::default()
         }))
-    // .add_plugin(FlyCameraPlugin)
     .add_systems(Startup, camera_setup)
     .add_systems(Startup, init_resources)
 
-
+        
+    .add_plugins(DebugCamPlugin)
     // Despawn previous render and build new one
     // TODO - incorporate schedule for rendering (Basically just do this on-enter of the render handler - so we have more control on the rendering)
     .add_systems(Update, (render_full_map))
