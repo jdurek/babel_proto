@@ -7,7 +7,7 @@
 use std::thread::spawn;
 
 use bevy::render::{camera, view::RenderLayers};
-// use bevy_fly_camera::{FlyCamera, FlyCameraPlugin};
+
 
 mod prelude {
     pub use bevy::prelude::*;
@@ -15,6 +15,8 @@ mod prelude {
     pub use babel_proto::data_structs::map_data::*; 
     pub use babel_proto::rendering::minimap::*;
     pub use babel_proto::rendering::first_person::*;
+    pub use babel_proto::rendering::debug_camera::*;
+    pub use babel_proto::states::*;
 }
 
 use prelude::*;
@@ -53,6 +55,7 @@ fn init_resources(mut commands: Commands){
 }
 
 
+
 fn main() {
     App::new()
     .add_plugins(DefaultPlugins
@@ -67,12 +70,15 @@ fn main() {
     .add_systems(Startup, camera_setup)
     .add_systems(Startup, init_resources)
 
+    .insert_state(MapState::DebugMap)
+
         
     .add_plugins(DebugCamPlugin)
+
     // Despawn previous render and build new one
-    // TODO - incorporate schedule for rendering (Basically just do this on-enter of the render handler - so we have more control on the rendering)
-    .add_systems(Update, (render_full_map))
-    
+    // TODO - move this logic into the states folder to clean up this section
+    .add_systems(OnEnter(MapState::DebugMap), (render_full_map))
+    .add_systems(OnEnter(MapState::TownMap), (render_full_map))
     .run();
 }
 
