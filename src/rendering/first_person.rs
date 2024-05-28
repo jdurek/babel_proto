@@ -18,6 +18,8 @@ use bevy::prelude::*;
 use crate::data_structs::*;
 use bevy::input::mouse::MouseMotion;
 
+const SCALE:f32 = 8.;
+
 /*
     General flow - 
         Fetch the JSON resource, AND entities with the CurrMap resource (Or Town Map resource). Also fetch the coordinate map resource for current map
@@ -33,7 +35,7 @@ pub fn render_region(
 
 }
 
-// Rendering function - renders the entire map (without any optimizations)
+// Rendering function - renders the entire map (without any optimizations - just basic colors )
 pub fn render_debug_map(
     mut commands: Commands,
     map_data: Res<CurrMap>,
@@ -57,9 +59,9 @@ pub fn render_debug_map(
     for x in 0..dim_x {
         for y in 0..dim_y {
             commands.spawn(PbrBundle {
-                mesh: meshes.add(Rectangle::new(3.8, 3.8)),
+                mesh: meshes.add(Rectangle::new(SCALE - (SCALE*0.1), SCALE - (SCALE*0.1))),
                 material: materials.add(Color::rgb_u8(200, 200, 0)),
-                transform: Transform::from_xyz(4.0 * x as f32, 0.0, 4.0 * y as f32)
+                transform: Transform::from_xyz(SCALE * x as f32, 0.0, SCALE * y as f32)
                                     .with_rotation(Quat::from_rotation_x(270. * PI / 180. )), 
                 ..default()
             });
@@ -67,7 +69,48 @@ pub fn render_debug_map(
         }
     }
 
-    // Wall loop
+    // Wall loop - this is currently separate from floor tiles due to there being multiple ways to approach this
+    // Currently iterates through all horizontal walls then vertical walls, optionally rendering a cuboid based on the index in wall vector
+    // This version would have the same texture on both sides of the wall - which may not be what's desired - 
+    // Alternate is to use the tile's wall array and render rectangles for the 'wall', since it's only visible from one direction for whatever reason.
+
+    for x in 0..dim_x + 1 {
+        for h in 0..dim_x {
+            let cur_index = (h + x *(dim_x + dim_y+1)) as usize;
+            if map_data.map_data.walls[cur_index].state == WallState::NoWall{
+                // No wall present, onto the next step
+                // continue;
+            }
+            // Wall was found, spawn and render
+            commands.spawn(PbrBundle{
+                mesh: meshes.add(Cuboid::new(0.2,SCALE,SCALE)),
+                material: materials.add(Color::rgb_u8(70, 0, 200)),
+                transform: Transform::from_xyz(SCALE * x as f32  - SCALE/2., 0.0, SCALE * h as f32)
+                                    .with_rotation(Quat::from_rotation_x(270. * PI / 180. )), 
+                ..default()
+            });
+        }
+    }
+
+    for y in 0..dim_y {
+        for v in 0..dim_y + 1 {
+            let cur_index = (dim_x + v + y*(dim_x + dim_y + 1)) as usize;
+            if map_data.map_data.walls[cur_index].state == WallState::NoWall{
+                // No wall present, onto the next step
+                // continue;
+            }
+            // Wall was found, spawn and render - change color accordingly if we can
+            commands.spawn(PbrBundle{
+                mesh: meshes.add(Cuboid::new(SCALE,SCALE,0.2)),
+                material: materials.add(Color::rgb_u8(70, 0, 200)),
+                transform: Transform::from_xyz(SCALE * y as f32, 0.0, SCALE * v as f32 - SCALE/2.)
+                                    .with_rotation(Quat::from_rotation_x(0. )), 
+                ..default()
+            });
+        }
+    }
+    
+    
 
 }
 
@@ -78,7 +121,7 @@ pub fn grid_movement(
     // query: Query<3dCameraBundle>
 ){
     // Fetch the camera with the query, and whatever movement was plugged in
-    // Move the camera accordingly with a 'slide' motion
+    // Move the camera accordingly with a 'slide' motion - just reuse a lot of the logic from the debug camera's movements, although the 'slide' itself may be tricky
     
 }
 
