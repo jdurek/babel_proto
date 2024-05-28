@@ -85,7 +85,7 @@ pub fn render_debug_map(
             commands.spawn(PbrBundle{
                 mesh: meshes.add(Cuboid::new(0.2,SCALE,SCALE)),
                 material: materials.add(Color::rgb_u8(70, 0, 200)),
-                transform: Transform::from_xyz(SCALE * x as f32  - SCALE/2., 0.0, SCALE * h as f32)
+                transform: Transform::from_xyz(SCALE * x as f32  - SCALE/2., SCALE/2., SCALE * h as f32)
                                     .with_rotation(Quat::from_rotation_x(270. * PI / 180. )), 
                 ..default()
             });
@@ -103,7 +103,7 @@ pub fn render_debug_map(
             commands.spawn(PbrBundle{
                 mesh: meshes.add(Cuboid::new(SCALE,SCALE,0.2)),
                 material: materials.add(Color::rgb_u8(70, 0, 200)),
-                transform: Transform::from_xyz(SCALE * y as f32, 0.0, SCALE * v as f32 - SCALE/2.)
+                transform: Transform::from_xyz(SCALE * y as f32, SCALE/2., SCALE * v as f32 - SCALE/2.)
                                     .with_rotation(Quat::from_rotation_x(0. )), 
                 ..default()
             });
