@@ -29,9 +29,11 @@ fn camera_setup(mut commands: Commands){
     // TODO - adjust the 3D camera initialization, as this'll be the first time using this camera variety
     // let mut camera = Camera3dBundle::default();
 
+
+    // TODO - figure out why the camera breaks when x and z are both 0 (EG, looking straight down)
     commands.spawn((
         Camera3dBundle {
-            transform: Transform::from_xyz(0.0, 10., -12.0).looking_at(Vec3::new(0., 1., 0.), Vec3::Y),
+            transform: Transform::from_xyz(-0.1, 50., 0.0).looking_at(Vec3::new(0., 1., 0.), Vec3::Y),
             ..default()
         },
         FlyCamera{..default()},
@@ -77,8 +79,8 @@ fn main() {
 
     // Despawn previous render and build new one
     // TODO - move this logic into the states folder to clean up this section
-    .add_systems(OnEnter(MapState::DebugMap), (render_full_map))
-    .add_systems(OnEnter(MapState::TownMap), (render_full_map))
+    .add_systems(OnEnter(MapState::DebugMap), (render_debug_map))
+    .add_systems(OnEnter(MapState::TownMap), (render_debug_map))
     .run();
 }
 

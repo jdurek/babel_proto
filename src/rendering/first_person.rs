@@ -12,7 +12,7 @@
 
  #![allow(unused)]
 
-use std::fmt::Debug;
+use std::{f32::consts::PI, fmt::Debug};
 
 use bevy::prelude::*;
 use crate::data_structs::*;
@@ -34,7 +34,7 @@ pub fn render_region(
 }
 
 // Rendering function - renders the entire map (without any optimizations)
-pub fn render_full_map(
+pub fn render_debug_map(
     mut commands: Commands,
     map_data: Res<CurrMap>,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -60,8 +60,7 @@ pub fn render_full_map(
                 mesh: meshes.add(Rectangle::new(3.8, 3.8)),
                 material: materials.add(Color::rgb_u8(200, 200, 0)),
                 transform: Transform::from_xyz(4.0 * x as f32, 0.0, 4.0 * y as f32)
-                                    .with_rotation(Quat::from_rotation_y(135.)),
-                
+                                    .with_rotation(Quat::from_rotation_x(270. * PI / 180. )), 
                 ..default()
             });
         

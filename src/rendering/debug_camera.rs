@@ -63,6 +63,7 @@ pub fn debug_camera(
 	}
 }
 
+// TODO - lock this to just the open window rather than the entire monitor? And lock it to a pre-defined direction first. 
 pub fn debug_cam_mouse(
     time: Res<Time>,
 	mut mouse_motion_events: EventReader<MouseMotion>,
@@ -185,7 +186,8 @@ pub struct DebugCamPlugin;
 impl Plugin for DebugCamPlugin{
     fn build(&self, app: &mut App) {
         app
-            .add_systems(Update, (debug_camera))
+            // .add_systems(Update, (debug_camera, debug_cam_mouse))
+			.add_systems(Update, (debug_camera))
         ;
     }
 }
