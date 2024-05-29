@@ -62,6 +62,7 @@ fn main() {
     // .add_systems(OnEnter(MapBuildState::RenderMap))
     .add_systems(Update, (draw_2d_map, render_complete).run_if(in_state(MapBuildState::RenderMap)))
     .add_systems(Update, mouse_behavior.run_if(in_state(MapBuildState::Drawing)))
+    // .add_systems(Update, text_summary)
     
     .run();
 }

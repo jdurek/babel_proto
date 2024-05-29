@@ -43,7 +43,7 @@ pub fn mouse_input(
     mut map: ResMut<CurrMap>,
     zoom: Res<ZoomLevel>,
     mut draw_line: Query<(&DragLine, &mut Transform, &mut Position, Entity)>,
-    mut center: ResMut<Center>,
+    mut center: Res<Center>,
 ){
     // First, check to see if the cursor position is on any menu buttons (Save, Load, Mode change)
     // If it is, handle it accordingly (Potentially hover-over, left-click, etc...)
@@ -101,15 +101,14 @@ pub fn mouse_behavior(
             if(loc_x / scale < 0.2 || loc_x / scale > 0.8) &&
               (loc_y / scale < 0.2 || loc_y / scale > 0.8)
             {
-                // We are close enough to 'snap' to a corner - so go ahead and snap it? 
-                // TODO -  For some reason, snapping to the corner might be a lot of effort, due to the walls being slightly offset, so shelve for a little? 
+                // We are close enough to 'snap' to a corner - so go ahead and snap it
 
-                start_x = world_position.x;
-                start_y = world_position.y;
+                // start_x = world_position.x;
+                // start_y = world_position.y;
                 // println!("{},{}",start_x, start_y);
 
-                // start_x = (world_position.x / scale).round() * scale ;
-                // start_y = (world_position.y / scale).round() * scale;
+                start_x = ((world_position.x + scale / 2.) / scale).round() * scale - scale / 2.;
+                start_y = ((world_position.y + scale / 2.) / scale).round() * scale - scale / 2.;
                 // println!("{},{}",start_x, start_y);
 
                 // Spawn the wall sprite with DragLine component
@@ -138,6 +137,21 @@ pub fn mouse_behavior(
                 let theta = norm_pts.1.atan2(norm_pts.0);
                 // Compute dist value - we can assume it will always be a right angle triangle
                 let dist = ((world_position.x - pos.x as f32).abs().powi(2) + (world_position.y - pos.y as f32).abs().powi(2)).sqrt();
+
+                // If dist value is about the same length as scale, check to see if we can snap the line and draw a new wall
+                if dist > scale * 0.9 && dist < scale * 1.2 {
+                    if  (loc_x / scale < 0.1 || loc_x / scale > 0.9) &&
+                        (loc_y / scale < 0.1 || loc_y / scale > 0.9) 
+                    {
+                        // We can snap the line - perform that operation and update the walls where appropiate
+                        let (old_x, old_y) = (pos.x as f32, pos.y as f32);
+
+                        pos.x = (((world_position.x + scale / 2.) / scale).round() * scale - scale / 2.) as i32;
+                        pos.y = (((world_position.y + scale / 2.) / scale).round() * scale - scale / 2.) as i32;
+
+                        // Call the dedicated wall utility function associated with MapBase / CurrMap
+                    }
+                }
 
 
                 // Update the wall sprite - caps length to match current scaling of the map
@@ -271,7 +285,26 @@ pub fn save_cleanup(
 }
 
 
+// Debug/testing tool - displays misc information related to current minimap in editor screen
+pub fn text_summary(mut commands: Commands,){
+    let debug_text = "{}";
+    let text_style = TextStyle {
+        font_size: 20.0,
+        color: Color::WHITE,
+        ..Default::default()
+    };
+    
+    // Delete previous bundle if one was already created (Prevents this from spawning infinitely)
 
+    commands.spawn((
+        Text2dBundle {
+            text: Text::from_section(debug_text, text_style.clone())
+                .with_justify(JustifyText::Center),
+            ..default()
+        },
+    ));
+
+}
 
 
 /*
