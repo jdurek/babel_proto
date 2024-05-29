@@ -5,6 +5,7 @@
 
 #![allow(unused)]
 
+use bevy::ecs::world;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use crate::data_structs::map_data::*; 
@@ -83,6 +84,9 @@ pub fn mouse_behavior(
         .map(|ray| ray.origin.truncate())
     {
         // Translate the cursor position into our map position (Based on where the map is currently located)
+        // Due to a quirk, the corners are offset onto scale/2 grid, rather than scale grid
+
+        // Rounded positions is used to check if the tile is valid (EG, within center and whatever other bounding was used)
         let scale = zoom.zoom as f32;
         let rounded_positions = (world_position.x.round() + scale/2., world_position.y.round() + scale/2.);
         let loc_x = rounded_positions.0.rem_euclid(scale);
@@ -97,9 +101,16 @@ pub fn mouse_behavior(
             if(loc_x / scale < 0.2 || loc_x / scale > 0.8) &&
               (loc_y / scale < 0.2 || loc_y / scale > 0.8)
             {
-                // We are close enough to 'snap' to a corner
+                // We are close enough to 'snap' to a corner - so go ahead and snap it? 
+                // TODO -  For some reason, snapping to the corner might be a lot of effort, due to the walls being slightly offset, so shelve for a little? 
+
                 start_x = world_position.x;
                 start_y = world_position.y;
+                // println!("{},{}",start_x, start_y);
+
+                // start_x = (world_position.x / scale).round() * scale ;
+                // start_y = (world_position.y / scale).round() * scale;
+                // println!("{},{}",start_x, start_y);
 
                 // Spawn the wall sprite with DragLine component
                 commands.spawn((SpriteBundle{

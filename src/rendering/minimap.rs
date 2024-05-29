@@ -18,6 +18,9 @@ pub struct DragLine;
 #[derive(Component)]
 pub struct MapCellSprite;
 
+#[derive(Component)]
+pub struct MapWallSprite;
+
 // Used to shift around the (0,0) position (All tiles spawn to the upper right of 0,0)
 #[derive(Resource)]
 pub struct Center{
@@ -65,6 +68,22 @@ pub fn draw_2d_map(
         for h in 0..map.map_data.dim_x {
             // Index in the wall vector is x + h*(x + dim_y + 1)
             let indx = (h + x*(map.map_data.dim_x + map.map_data.dim_y + 1)) as usize;
+            if map.map_data.walls[indx].state == WallState::NoWall || map.map_data.walls[indx].state == WallState::Door {
+                continue;
+            }
+            commands.spawn((SpriteBundle{
+                sprite: Sprite {color: Color::ANTIQUE_WHITE, ..Default::default()},
+                visibility: Visibility::Visible,
+                transform: Transform {
+                    // Translation is offset from center of sprite to bottom left corner - 
+                    translation: Vec2::new(h as f32 * grid_scale + center.x, x as f32 * grid_scale - grid_scale/2. + center.y).extend(0.0),
+                    scale: Vec3::new(grid_scale, 1.5, 1.),
+                    ..default()
+                },
+                ..Default::default()
+            },
+            MapWallSprite,
+            ));
         }
     }
     
@@ -72,6 +91,22 @@ pub fn draw_2d_map(
         for v in 0..map.map_data.dim_y + 1 {
             // Index in the wall vector is dim_x + v + y*(x+y+1)
             let indx = (map.map_data.dim_x + v + y*(map.map_data.dim_x + map.map_data.dim_y + 1)) as usize;
+            if map.map_data.walls[indx].state == WallState::NoWall || map.map_data.walls[indx].state == WallState::Door {
+                continue;
+            }
+            commands.spawn((SpriteBundle{
+                sprite: Sprite {color: Color::ANTIQUE_WHITE, ..Default::default()},
+                visibility: Visibility::Visible,
+                transform: Transform {
+                    // Translation is offset from center of sprite to bottom left corner - 
+                    translation: Vec2::new(v as f32 * grid_scale - grid_scale/2. + center.x, y as f32 * grid_scale + center.y).extend(0.0),
+                    scale: Vec3::new(1.5, grid_scale, 1.),
+                    ..default()
+                },
+                ..Default::default()
+            },
+            MapWallSprite,
+            ));
         }
     }
 
