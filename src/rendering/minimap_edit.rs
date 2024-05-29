@@ -29,6 +29,7 @@ pub enum MapCursorMode {
     Wall,   // Wall-drawing behavior
     Drag,   // Two ways to think of this - dragging stuff like mobs/entities, or sliding the map to change the 0,0 point
     Paint,  // Apply generic behavior to tile (Such as water, terrain type, etc...)
+    Trait,  // Modify trait of existing object (EG, if wall exists, modify the type of wall)
 }
 
 #[derive(Component)]
@@ -149,7 +150,8 @@ pub fn mouse_behavior(
                         pos.x = (((world_position.x + scale / 2.) / scale).round() * scale - scale / 2.) as i32;
                         pos.y = (((world_position.y + scale / 2.) / scale).round() * scale - scale / 2.) as i32;
 
-                        // Call the dedicated wall utility function associated with MapBase / CurrMap
+                        // Add the wall to our map (In walls and tiles.walls)
+                        
                     }
                 }
 

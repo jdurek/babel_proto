@@ -84,13 +84,13 @@ impl MapBase {
         self.walls[index] = w;
     }
 
-    // Given a coordinate, obtain the tile index (usize)
+    // Given a single coordinate, obtain the tile index (usize)
     pub fn get_tile_index(&self, x: i32, y: i32) -> usize {
         (y * self.dim_y + x) as usize
     }
 
-    // Given a coordinate, obtain the 4 wall indexes (usize)
-    pub fn get_wall_index(&self, x:i32, y:i32) -> [usize; 4] {
+    // Given a single tile coordinate, obtain the 4 wall indexes (usize)
+    pub fn get_walls_from_tile_index(&self, x:i32, y:i32) -> [usize; 4] {
         let bottom = y * (self.dim_y + self.dim_x + 1) + x;
         let left = y * (self.dim_y + self.dim_x + 1) + self.dim_x + x;
         let right = left + 1;
@@ -98,6 +98,71 @@ impl MapBase {
 
         [bottom as usize, left as usize, right as usize, top as usize]
     }
+
+    // Given a line (two coordinates) of length 1, determine which tiles are adjecent to it (1-2 tiles)
+    pub fn get_tiles_from_line(&self, x1:i32, y1: i32, x2: i32, y2: i32) -> Result<usize, String>{
+        // Basic validation - 
+        if (x1 - x2 + y1 - y2).abs() != 1 {
+            // Line length is not equal to 1, cannot use this line
+            return Err(String::from("Line length is not 1 - cannot obtain valid tiles"))
+        }
+        if self.coordinate_validator(x1, y1) == false || self.coordinate_validator(x2, y2) == false {
+            // One of the coordinates is out of bounds, the line is invalid
+            return Err(String::from("One or more parts of the line is not within expected coordinate region"))
+        }
+
+        // Validation passed, can now determine which tile(s) are adjecent to our line
+        Ok(0)
+    }
+
+    // Given a line (two coordinates) of length 1, determine which wall index this line is
+    pub fn get_wall_from_line(&self, x1:i32, y1: i32, x2: i32, y2: i32) -> Result<usize, String>{
+        // Basic validation - 
+        if (x1 - x2 + y1 - y2).abs() != 1 {
+            // Line length is not equal to 1, cannot use this line
+            return Err(String::from("Line length is not 1 - cannot obtain valid tiles"))
+        }
+        if self.coordinate_validator(x1, y1) == false || self.coordinate_validator(x2, y2) == false {
+            // One of the coordinates is out of bounds, the line is invalid
+            return Err(String::from("One or more parts of the line is not within expected coordinate region"))
+        }
+
+        // Validation passed, can now compute the wall index from the coordinates
+        let (x_diff, y_diff) = (x1-x2, y1-y2);
+        let mut index = [0,0];
+
+        match(x_diff, y_diff) {     // Always uses bottom left corner for determining index of wall
+            (-1,0) => {     // Rightward line - use x1, y1 as index
+
+            }
+            (1, 0) => {     // Leftward line - use x2, y2 as index
+
+            }
+            (0,-1) => {     // Upward line - use x1, y1 as index
+
+            }
+            (0, 1) => {     // Downward line - use x2, y2 as index
+
+            }
+            _ => {          // Error case - line is not equal to 1
+                // Should be impossible to reach this branch
+                return Err(String::from("Match Statement hates your logic"))
+            }
+        }
+
+        Ok(0)
+    }
+
+    // coordinate validation - basically make sure the provided coordinate fits within the map's bounds
+    // validation includes positions where walls may exist, (EG, outer edge)
+    fn coordinate_validator(&self, x:i32, y:i32) -> bool {
+        if x < 0 || y < 0 || x > self.dim_x || y > self.dim_y {
+            return true
+        }
+        false
+    }
+
+    
 
 }
 
