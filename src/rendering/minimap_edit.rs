@@ -10,6 +10,7 @@ use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use crate::data_structs::map_data::*; 
 use crate::rendering::minimap::*;
+use crate::states::MapState;
 
 
 // Simple states for the map_builder loop - only needed by the map_builder tool at the moment, which is why it's only kept in here
@@ -73,7 +74,9 @@ pub fn mouse_behavior(
     mut map: ResMut<CurrMap>,
     zoom: Res<ZoomLevel>,
     mut draw_line: Query<(&DragLine, &mut Transform, &mut Position, Entity)>,
-    mut center: ResMut<Center>,
+    mut center: Res<Center>,
+    // mut cur_state: Res<State<MapState>>,
+    // mut map_state: ResMut<NextState<MapState>>,
 ){
     // Initialize camera and position info
     let (camera, camera_transform) = map_cam.single();
@@ -151,6 +154,18 @@ pub fn mouse_behavior(
                         pos.y = (((world_position.y + scale / 2.) / scale).round() * scale - scale / 2.) as i32;
 
                         // Add the wall to our map (In walls and tiles.walls)
+                        let start_pair = coordinate_conv(center.as_ref(), zoom.zoom as f32, old_x, old_y);
+                        let end_pair = coordinate_conv(center.as_ref(), zoom.zoom as f32, pos.x as f32, pos.y as f32);
+
+                        println!("Start: ({},{}) | End: ({},{})", start_pair.0, start_pair.1, end_pair.0, end_pair.1);
+
+                        let new_wall = Wall{ state: WallState::Solid, passable: false };
+                        // let Ok(idx) = map.map_data.get_wall_from_line(start_pair.0, start_pair.1, end_pair.0, end_pair.1) 
+                        //     else { return };
+                        // map.map_data.update_wall(new_wall, idx);
+
+                        // Trigger re-rendering by shifting states (Or just re-entering itself, but that might not be supported)
+
                         
                     }
                 }
@@ -182,6 +197,17 @@ pub fn mouse_behavior(
     }
 }
 
+// Helper function - converts mouse cursor/screen position into minimap coordinates
+pub fn coordinate_conv(
+    center: &Center,
+    zoom: f32,
+    cur_x: f32,
+    cur_y: f32,
+) -> (i32, i32){
+    let x = ((cur_x - center.x) / zoom).round();
+    let y = ((cur_y - center.y) / zoom).round();
+    (x as i32, y as i32)
+}
 
 /*
     GUI Menu section - This is mainly for rendering and interactivity of the GUI menu, along with defining a few constants. 
