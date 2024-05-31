@@ -75,8 +75,7 @@ pub fn mouse_behavior(
     zoom: Res<ZoomLevel>,
     mut draw_line: Query<(&DragLine, &mut Transform, &mut Position, Entity)>,
     mut center: Res<Center>,
-    // mut cur_state: Res<State<MapState>>,
-    // mut map_state: ResMut<NextState<MapState>>,
+    mut map_state: ResMut<NextState<MapBuildState>>,
 ){
     // Initialize camera and position info
     let (camera, camera_transform) = map_cam.single();
@@ -160,12 +159,12 @@ pub fn mouse_behavior(
                         println!("Start: ({},{}) | End: ({},{})", start_pair.0, start_pair.1, end_pair.0, end_pair.1);
 
                         let new_wall = Wall{ state: WallState::Solid, passable: false };
-                        // let Ok(idx) = map.map_data.get_wall_from_line(start_pair.0, start_pair.1, end_pair.0, end_pair.1) 
-                        //     else { return };
-                        // map.map_data.update_wall(new_wall, idx);
+                        let Ok(idx) = map.map_data.get_wall_from_line(start_pair.0, start_pair.1, end_pair.0, end_pair.1) 
+                            else { return };
+                        map.map_data.update_wall(new_wall, idx);
 
                         // Trigger re-rendering by shifting states (Or just re-entering itself, but that might not be supported)
-
+                        map_state.set(MapBuildState::RenderMap);
                         
                     }
                 }

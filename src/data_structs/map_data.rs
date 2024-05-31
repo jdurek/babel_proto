@@ -72,7 +72,7 @@ impl MapBase {
 
     // Helper functions to make accessing and handling data easier
     pub fn get_tile(&self, x: i32, y:i32) -> Tile {
-        self.tiles[self.get_tile_index(x, y)]
+        self.tiles[self.get_tile_index(x, y) as usize]
     }
 
     // Given a X/Y coordinate, update the tile data at said coordinate
@@ -82,11 +82,12 @@ impl MapBase {
     // Given a wall index (Use helper function), update the wall value
     pub fn update_wall(&mut self, w: Wall, index: usize) {
         self.walls[index] = w;
+        println!("Wall inserted at index {}", index);
     }
 
     // Given a single coordinate, obtain the tile index (usize)
-    pub fn get_tile_index(&self, x: i32, y: i32) -> usize {
-        (y * self.dim_y + x) as usize
+    pub fn get_tile_index(&self, x: i32, y: i32) -> i32 {
+        (y * self.dim_y + x) as i32
     }
 
     // Given a single tile coordinate, obtain the 4 wall indexes (usize)
@@ -100,7 +101,7 @@ impl MapBase {
     }
 
     // Given a line (two coordinates) of length 1, determine which tiles are adjecent to it (1-2 tiles)
-    pub fn get_tiles_from_line(&self, x1:i32, y1: i32, x2: i32, y2: i32) -> Result<usize, String>{
+    pub fn get_tiles_from_line(&self, x1:i32, y1: i32, x2: i32, y2: i32) -> Result<[i32;2], String>{
         // Basic validation - 
         if (x1 - x2 + y1 - y2).abs() != 1 {
             // Line length is not equal to 1, cannot use this line
@@ -112,7 +113,74 @@ impl MapBase {
         }
 
         // Validation passed, can now determine which tile(s) are adjecent to our line
-        Ok(0)
+        let x_diff = x1 - x2;
+        let y_diff = y1 - y2;
+        let mut index = [0, 0];
+
+        match(x_diff, y_diff) {     // Always uses bottom left corner for determining index of wall
+            (-1,0) => {     // Rightward line - use x1, y1 as index
+                if y1 == 0 {    // Line is at bottom edge of the map - 1 tile does not exist
+                    index[0] = -1;
+                }
+                else {
+                    index[0] = self.get_tile_index(x1, y1-1);
+                }
+                if y1 == self.dim_y {   // Line is at top edge of map
+                    index[1] = -1;
+                }
+                else {
+                    index[1] = self.get_tile_index(x1, y1);
+                }
+            }
+            (1, 0) => {     // Leftward line - use x2, y2 as index
+                if y1 == 0 {    // Line is at bottom edge of the map - 1 tile does not exist
+                    index[0] = -1;
+                }
+                else {
+                    index[0] = self.get_tile_index(x2, y2-1);
+                }
+                if y1 == self.dim_y {   // Line is at top edge of map
+                    index[1] = -1;
+                }
+                else {
+                    index[1] = self.get_tile_index(x2, y2);
+                }
+            }
+            (0,-1) => {     // Upward line - use x1, y1 as index
+                if x1 == 0 {    // Line is at left edge of the map
+                    index[0] = -1;
+                }
+                else {
+                    index[0] = self.get_tile_index(x1-1, y1);
+                }
+                if x1 == self.dim_x {   // Line is at right edge of map
+                    index[1] = -1;
+                }
+                else {
+                    index[1] = self.get_tile_index(x1, y1);
+                }
+            }
+            (0, 1) => {     // Downward line - use x2, y2 as index
+                if x1 == 0 {    // Line is at left edge of the map
+                    index[0] = -1;
+                }
+                else {
+                    index[0] = self.get_tile_index(x2-1, y2);
+                }
+                if x1 == self.dim_x {   // Line is at right edge of map
+                    index[1] = -1;
+                }
+                else {
+                    index[1] = self.get_tile_index(x2, y2);
+                }
+            }
+            _ => {          // Error case - line is not equal to 1
+                // Should be impossible to reach this branch
+                return Err(String::from("Match Statement hates your logic"))
+            }
+        }
+
+        Ok(index)
     }
 
     // Given a line (two coordinates) of length 1, determine which wall index this line is
@@ -129,20 +197,20 @@ impl MapBase {
 
         // Validation passed, can now compute the wall index from the coordinates
         let (x_diff, y_diff) = (x1-x2, y1-y2);
-        let mut index = [0,0];
+        let mut index = 0;
 
         match(x_diff, y_diff) {     // Always uses bottom left corner for determining index of wall
-            (-1,0) => {     // Rightward line - use x1, y1 as index
-
+            (-1,0) => {     // Rightward horizontal - use x1, y1 as index
+                index = (2 * self.dim_x + 1) * y1 + x1;
             }
-            (1, 0) => {     // Leftward line - use x2, y2 as index
-
+            (1, 0) => {     // Leftward horizontal - use x2, y2 as index (Or just subtract 1 from x1)
+                index = (2 * self.dim_x + 1) * y1 + (x1 -1);
             }
-            (0,-1) => {     // Upward line - use x1, y1 as index
-
+            (0,-1) => {     // Upward vertical - use x1, y1 as index
+                index = (2 * self.dim_x + 1) * y1 + x1 + self.dim_x;
             }
-            (0, 1) => {     // Downward line - use x2, y2 as index
-
+            (0, 1) => {     // Downward vertical - use x2, y2 as index (Or just subtract 1 from y1)
+                index = (2 * self.dim_x + 1) * (y1-1) + x1 + self.dim_x;
             }
             _ => {          // Error case - line is not equal to 1
                 // Should be impossible to reach this branch
@@ -150,11 +218,11 @@ impl MapBase {
             }
         }
 
-        Ok(0)
+        Ok(index as usize)
     }
 
     // coordinate validation - basically make sure the provided coordinate fits within the map's bounds
-    // validation includes positions where walls may exist, (EG, outer edge)
+    // validation includes positions where walls may exist, (EG, outer edge) - may want to have a separate validator for tiles and walls due to how walls are implemented. 
     fn coordinate_validator(&self, x:i32, y:i32) -> bool {
         if x < 0 || y < 0 || x > self.dim_x || y > self.dim_y {
             return true

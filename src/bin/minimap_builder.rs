@@ -12,6 +12,7 @@ mod prelude {
     pub use babel_proto::data_structs::map_data::*; 
     pub use babel_proto::rendering::minimap::*;
     pub use babel_proto::rendering::minimap_edit::*;
+    pub use babel_proto::states::*;
 }
 
 use prelude::*;
@@ -56,6 +57,7 @@ fn main() {
     .add_systems(Startup, camera_setup)
     .add_systems(Startup, init_resources)
 
+    .init_state::<MapState>()
     .init_state::<MapBuildState>()
 
     // Despawn previous render and build new one
