@@ -226,9 +226,9 @@ impl MapBase {
     // validation includes positions where walls may exist, (EG, outer edge) - may want to have a separate validator for tiles and walls due to how walls are implemented. 
     fn coordinate_validator(&self, x:i32, y:i32) -> bool {
         if x < 0 || y < 0 || x > self.dim_x || y > self.dim_y {
-            return true
+            return false
         }
-        false
+        true
     }
 
     

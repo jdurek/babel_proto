@@ -41,14 +41,32 @@ mod tests {
     fn test_wall_index() {
         // TODO - Implement tests for this - basically come up with a few where I know the intended outcome and see how the function handles.
         // Given a few maps of varying sizes, correctly determine the wall index of a given line
-        // let test_map = MapBase::new(3,3);
+        let test_map = MapBase::new(3,3);
+        assert_eq!(test_map.get_wall_from_line(0, 0, 0, 1), Ok(3));
+        assert_eq!(test_map.get_wall_from_line(0, 0, 1, 0), Ok(0));
+
+        assert_eq!(test_map.get_wall_from_line(2, 2, 2, 1), Ok(12));
+        assert_eq!(test_map.get_wall_from_line(2, 2, 2, 3), Ok(19));
+        assert_eq!(test_map.get_wall_from_line(3, 2, 3, 1), Ok(13));
+        assert_eq!(test_map.get_wall_from_line(3, 3, 2, 3), Ok(23));
+        
+        assert!(test_map.get_wall_from_line(5, 0, 5, 1).is_err());
+        assert!(test_map.get_wall_from_line(0, 0, 1, 1).is_err());
 
 
+        let test_map = MapBase::new(2,5);
+        assert_eq!(test_map.get_wall_from_line(0, 0, 1, 0), Ok(0));
+        assert_eq!(test_map.get_wall_from_line(0, 0, 0, 1), Ok(2));
 
-        // let test_map = MapBase::new(2,5);
+        assert_eq!(test_map.get_wall_from_line(0, 5, 1, 5), Ok(25));
+        assert_eq!(test_map.get_wall_from_line(2, 0, 2, 1), Ok(4));
+
+        assert!(test_map.get_wall_from_line(3, 0, 3, 1).is_err());
 
 
-        // let test_map = MapBase::new(5,2);
+        let test_map = MapBase::new(5,2);
+        assert_eq!(test_map.get_wall_from_line(0, 0, 1, 0), Ok(0));
+        assert_eq!(test_map.get_wall_from_line(0, 0, 0, 1), Ok(5));
     }
 
 
