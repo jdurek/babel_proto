@@ -388,6 +388,9 @@ pub fn mb_gui_plugin(app: &mut App){
         .add_systems(OnEnter(MapBuildState::SavingMap),save_map)
         .add_systems(OnEnter(MapBuildState::SavingMap),save_complete.after(save_map))
         .add_systems(OnExit(MapBuildState::SavingMap), save_cleanup)
+
+        .add_systems(OnEnter(MapBuildState::LoadingMap), load_map)
+        .add_systems(OnEnter(MapBuildState::LoadingMap), load_complete.after(load_map))
     ;
 }
 
@@ -413,6 +416,8 @@ pub fn save_map(
         let mut writer = BufWriter::new(file);
         let w = serde_json::to_writer(&mut writer, map_data.as_ref());
         writer.flush();
+
+        println!("Save complete!");
     }
     else{
         // User canceled action?
@@ -427,6 +432,33 @@ pub fn save_cleanup(
     // Currently empty - can adjust it to handle something like a 'Last Saved' notification or handling misc cleanup
 }
 
+
+// Takes a JSON the user provides from GUI (FileDialog) and loads it into CurrMap resource (Overwrites whatever's already in there)
+pub fn load_map(
+    mut commands: Commands,
+    map_data: ResMut<CurrMap>,
+){
+    let file = FileDialog::new()
+        .add_filter("data", &["json"])
+        .set_directory(std::env::current_dir().unwrap())
+        .pick_file();
+
+    // User has chosen a file - attempt to open and read the JSON into our struct (with serde_json)
+    if let Some(route) = file {
+        let file = File::open(route).unwrap();
+        let rdr = BufReader::new(file);
+
+        let temp_map: CurrMap = serde_json::from_reader(rdr).unwrap();
+
+        // Optional TODO: Do a quick prompt to the user to verify they want to load the map (and possibly show a preview?)
+        
+        // Insert the newly loaded CurrMap data into the resource ()
+        commands.insert_resource(temp_map);
+
+        println!("New map loaded!");
+        // 
+    }
+}
 
 // Debug/testing tool - displays misc information related to current minimap in editor screen
 pub fn text_summary(mut commands: Commands,){
@@ -477,6 +509,14 @@ pub fn save_complete(
     mut next_state: ResMut<NextState<MapBuildState>>,
 ){
     next_state.set(MapBuildState::Drawing);
+}
+
+pub fn load_complete(
+    mut commands: Commands,
+    mut next_state: ResMut<NextState<MapBuildState>>,
+){
+    // Trigger the re-rendering
+    next_state.set(MapBuildState::RenderMap);
 }
 
 // Function to draw wall - needs Commands, coordinates - may also add the 'wall edit' to this, to keep the logic clumped together, but ownership will be fun. 
