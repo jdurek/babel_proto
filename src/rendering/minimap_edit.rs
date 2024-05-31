@@ -3,7 +3,7 @@
 
 */
 
-#![allow(unused)]
+// #![allow(unused)]
 
 use bevy::ecs::world;
 use bevy::prelude::*;
@@ -11,6 +11,11 @@ use bevy::window::PrimaryWindow;
 use crate::data_structs::map_data::*; 
 use crate::rendering::minimap::*;
 use crate::states::MapState;
+
+// Following are for file I/O (save/load)
+use rfd::FileDialog;
+use std::fs::*;
+use std::io::*;
 
 
 // Simple states for the map_builder loop - only needed by the map_builder tool at the moment, which is why it's only kept in here
@@ -342,6 +347,40 @@ pub fn menu_button_system(
     }
 }
 
+pub fn menu_action(
+    interaction_query: Query<(&Interaction, &MBMenuButtonAction), (Changed<Interaction>, With<Button>)>,
+    mut menu_state: ResMut<NextState<MapBuildState>>,
+){
+    for (interaction, menu_action) in &interaction_query {
+        if *interaction == Interaction::Pressed{
+            // Match the button action to the logic - most of these will switch states
+            match menu_action{
+                MBMenuButtonAction::Save => {
+                    println!("SAVING BUTTON PRESSED");
+                    menu_state.set(MapBuildState::SavingMap);
+                }
+                MBMenuButtonAction::Load => {
+                    println!("LOAD BUTTON PRESSED");
+                    // menu_state.set(MapBuildState::LoadingMap);
+                }
+                MBMenuButtonAction::New => {
+                    // Load a blank map (requires us to define the size in a prompt)
+                    // menu_state.set(MapBuildState::NewMap);
+                }
+                MBMenuButtonAction::Undo => {
+
+                }
+                MBMenuButtonAction::Redo => {
+
+                }
+                _ => {
+                    println!("Unidentified action: {:?}", menu_action);
+                }
+            }
+        }
+    }
+}
+
 // Plugin for handling state-changes triggered by the menu GUI
 // Integrates 3 functions - save_gui when we enter SavingMap (on clicking the save button), save_complete to exit the state, and save_cleanup in case something needs to be handled
 pub fn mb_gui_plugin(app: &mut App){
@@ -352,11 +391,34 @@ pub fn mb_gui_plugin(app: &mut App){
     ;
 }
 
+// Takes the current map in-memory and writes it to a JSON file on-disk. 
+// Uses device's native GUI for saving (FileDialog) using RFD to interface with that
 pub fn save_map(
     mut commands: Commands,
     map_data: Res<CurrMap>,
 ){
-    // TODO - add RFD to cargo, so we can use Windows built-in file-browser for name/path navigation
+    println!("Attempting to save current map...");
+
+    // Opens native GUI interface for saving a file with .json as accepted format
+    let file = FileDialog::new()
+        .add_filter("data", &["json"])
+        .set_directory(std::env::current_dir().unwrap())
+        .save_file();
+
+    // Once the above is complete (Blocks until it's resolved), writes the MapData to file
+    // let map_str = serde_json::to_string(map_data.as_ref());
+    if let Some(route) = file {
+        let file = File::create(route).unwrap();
+
+        let mut writer = BufWriter::new(file);
+        let w = serde_json::to_writer(&mut writer, map_data.as_ref());
+        writer.flush();
+    }
+    else{
+        // User canceled action?
+        println!("User canceled operation");
+    }
+
 }
 
 pub fn save_cleanup(
