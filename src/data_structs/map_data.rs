@@ -85,9 +85,10 @@ impl MapBase {
         println!("Wall inserted at index {}", index);
     }
 
-    // Given a single coordinate, obtain the tile index (usize)
+    // Given a single coordinate, obtain the tile index - if it's out of bounds, return -1
     pub fn get_tile_index(&self, x: i32, y: i32) -> i32 {
-        (y * self.dim_y + x) as i32
+        if x >= self.dim_x || y >= self.dim_y || x < 0 || y < 0 {return -1;}
+        (y * self.dim_x + x) as i32
     }
 
     // Given a single tile coordinate, obtain the 4 wall indexes (usize)
