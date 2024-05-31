@@ -56,6 +56,7 @@ fn main() {
         }))
     .add_systems(Startup, camera_setup)
     .add_systems(Startup, init_resources)
+    .add_systems(Startup, draw_mb_menu)
 
     .init_state::<MapState>()
     .init_state::<MapBuildState>()
@@ -64,6 +65,7 @@ fn main() {
     // .add_systems(OnEnter(MapBuildState::RenderMap))
     .add_systems(Update, (draw_2d_map, render_complete).run_if(in_state(MapBuildState::RenderMap)))
     .add_systems(Update, mouse_behavior.run_if(in_state(MapBuildState::Drawing)))
+    .add_systems(Update, menu_button_system)
     // .add_systems(Update, text_summary)
     
     .run();

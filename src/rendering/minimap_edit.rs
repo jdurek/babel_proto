@@ -36,6 +36,15 @@ pub enum MapCursorMode {
 #[derive(Component)]
 pub struct SelectedOption;
 
+#[derive(Component, Debug)]
+pub enum MBMenuButtonAction {
+    New,
+    Save,
+    Load,
+    Undo,
+    Redo,
+}
+
 // Logic for handling all mouse input during map builder's main drawing loop
 pub fn mouse_input(
     mut commands: Commands,
@@ -263,18 +272,49 @@ pub fn draw_mb_menu(
     commands
         .spawn(NodeBundle{
             style: Style {
+                flex_direction: FlexDirection::Column,      // Forces the children buttons into a column config
                 align_items: AlignItems::Center,
+                position_type: PositionType::Absolute,
+                left: Val::Px(0.),
+                top: Val::Px(0.),
+                bottom: Val::Px(0.),
                 ..Default::default()
             },
             background_color: Color::SEA_GREEN.into(),
             ..Default::default()
         })
-        .with_children(|f|{
-            f.spawn(NodeBundle
+        .with_children(|parent|{
+            // MB Menu Title
+
+            // Save Button
+            parent
+            .spawn((ButtonBundle
                 {
+                    style: btn_style.clone(),
+                    background_color: Color::GRAY.into(),
                     ..Default::default()
-                }
-            ).with_children(|f|{f.spawn(NodeBundle{..Default::default()});});
+                },
+                MBMenuButtonAction::Save,
+            ))
+            .with_children(|parent| {
+                parent.spawn(TextBundle::from_section("Save Map", btn_text_style.clone(),
+                ));
+            });
+
+            // Load Button
+            parent
+            .spawn((ButtonBundle
+                {
+                    style: btn_style.clone(),
+                    background_color: Color::GRAY.into(),
+                    ..Default::default()
+                },
+                MBMenuButtonAction::Load,
+            ))
+            .with_children(|parent| {
+                parent.spawn(TextBundle::from_section("Load Map", btn_text_style.clone(),
+                ));
+            });
         })
            
     ;
@@ -306,13 +346,13 @@ pub fn menu_button_system(
 // Integrates 3 functions - save_gui when we enter SavingMap (on clicking the save button), save_complete to exit the state, and save_cleanup in case something needs to be handled
 pub fn mb_gui_plugin(app: &mut App){
     app
-        .add_systems(OnEnter(MapBuildState::SavingMap),save_gui)
-        .add_systems(OnEnter(MapBuildState::SavingMap),save_complete.after(save_gui))
+        .add_systems(OnEnter(MapBuildState::SavingMap),save_map)
+        .add_systems(OnEnter(MapBuildState::SavingMap),save_complete.after(save_map))
         .add_systems(OnExit(MapBuildState::SavingMap), save_cleanup)
     ;
 }
 
-pub fn save_gui(
+pub fn save_map(
     mut commands: Commands,
     map_data: Res<CurrMap>,
 ){
