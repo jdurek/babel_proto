@@ -152,9 +152,10 @@ pub fn mouse_behavior(
                         pos.x = (((world_position.x + scale / 2.) / scale).round() * scale - scale / 2.) as i32;
                         pos.y = (((world_position.y + scale / 2.) / scale).round() * scale - scale / 2.) as i32;
 
+                        // println!("Pre-conv: Start: ({},{}) | End: ({},{})", old_x, old_y, pos.x, pos.y);
                         // Add the wall to our map (In walls and tiles.walls)
-                        let start_pair = coordinate_conv(center.as_ref(), zoom.zoom as f32, old_x, old_y);
-                        let end_pair = coordinate_conv(center.as_ref(), zoom.zoom as f32, pos.x as f32, pos.y as f32);
+                        let start_pair = wall_coordinate_conv(center.as_ref(), zoom.zoom as f32, old_x, old_y);
+                        let end_pair = wall_coordinate_conv(center.as_ref(), zoom.zoom as f32, pos.x as f32, pos.y as f32);
 
                         println!("Start: ({},{}) | End: ({},{})", start_pair.0, start_pair.1, end_pair.0, end_pair.1);
 
@@ -196,7 +197,20 @@ pub fn mouse_behavior(
     }
 }
 
-// Helper function - converts mouse cursor/screen position into minimap coordinates
+// Helper function - converts mouse cursor/screen position into minimap wall coordinates
+pub fn wall_coordinate_conv(
+    center: &Center,
+    zoom: f32,
+    cur_x: f32,
+    cur_y: f32,
+) -> (i32, i32){
+    // To avoid rounding issues in the wall itself, we shift over by zoom/2 to the right (brings it in line to 0,0) 
+    let x = ((cur_x - center.x + zoom/2.) / zoom).round();
+    let y = ((cur_y - center.y + zoom/2.) / zoom).round();
+    (x as i32, y as i32)
+}
+
+// Helper function - converts mouse cursor/screen position into minimap tile coordinates
 pub fn coordinate_conv(
     center: &Center,
     zoom: f32,
