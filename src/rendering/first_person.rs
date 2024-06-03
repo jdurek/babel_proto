@@ -79,7 +79,7 @@ pub fn render_debug_map(
             let cur_index = (h + x *(dim_x + dim_y+1)) as usize;
             if map_data.map_data.walls[cur_index].state == WallState::NoWall{
                 // No wall present, onto the next step
-                // continue;
+                continue;
             }
             // Wall was found, spawn and render
             commands.spawn(PbrBundle{
@@ -97,7 +97,7 @@ pub fn render_debug_map(
             let cur_index = (dim_x + v + y*(dim_x + dim_y + 1)) as usize;
             if map_data.map_data.walls[cur_index].state == WallState::NoWall{
                 // No wall present, onto the next step
-                // continue;
+                continue;
             }
             // Wall was found, spawn and render - change color accordingly if we can
             commands.spawn(PbrBundle{

@@ -51,6 +51,9 @@ fn init_resources(mut commands: Commands){
     let curr_map = CurrMap::new(base_map);
     let zoom = ZoomLevel { zoom: 16 };
     let center = Center {x: -64., y: -64.};
+
+    let curr_map = CurrMap::load_from_json("src\\assets\\maps\\16x16_proto.json".to_string());
+
     commands.insert_resource(curr_map);
     commands.insert_resource(zoom);
     commands.insert_resource(center);

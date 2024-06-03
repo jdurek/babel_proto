@@ -28,7 +28,7 @@ pub struct Center{
     pub y: f32,
 }
 
-// Function to render a map JSON to a 2D camera
+// Function to render a map JSON to a 2D camera - probably easier to just parse the JSON directly into Cur_Map and call draw_2d_map instead
 pub fn draw_2d_map_from_json(mut commands: Commands, map: MapBase){
 
 }

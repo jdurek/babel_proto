@@ -9,7 +9,9 @@ use std::collections::HashMap;
 use bevy::prelude::*;
 use serde::*;
 
-
+// For serializer/deserializer - 
+use std::fs::*;
+use std::io::BufReader;
 
 // TODO - figure out if I want to move this component elsewhere, since it's not exclusive to maps
 // Note - This requires Eq and Hash for the HashMap to work
@@ -253,10 +255,22 @@ impl CurrMap{
         }
     }
     // Load Function (Loads in JSON into map_data, creates the entities, and populates the position lookup)
+    pub fn load_from_json(path: String) -> CurrMap {
+
+        let file = File::open(path).unwrap();
+        let rdr = BufReader::new(file);
+
+        // TODO - plug this into error-handling so we can recover/record the whoopsie
+        serde_json::from_reader(rdr).unwrap()
+        
+    }
+
+    // Save Function - How do we define the save paths and filenames? 
     
-    // Save Function
     // Read Function (If needed - ownership on resources is funny)
+
     // Edit Function - Affects player data and entities. 
+    // Likely won't see much use, as I could just edit the entity directly
 }
 
 // Due to how entities are accessed, the Map for position to entities can't be defined in impl CurrMap
