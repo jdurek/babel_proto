@@ -36,4 +36,5 @@ pub enum GameState {
     Shop,
     Dialogue,
     Cutscene,
+    Loading,
 }
