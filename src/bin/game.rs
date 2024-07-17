@@ -25,5 +25,25 @@ mod prelude {
 use prelude::*;
 
 fn main(){
+  // Main app flow - 
+  App::new()
 
+    // Initializes the window of the game (From default or settings file)
+    // Eventual TODO - configure so resolution of window is pulled from config file
+    .add_plugins(DefaultPlugins
+      .set(WindowPlugin{
+          primary_window: Some(Window{ 
+              title: "Ideation".to_string(),
+              resolution: (1024 as f32, 720 as f32).into(),  // TODO - change this later for custom resolution (Or update it on the fly)
+              ..Default::default()
+          }),
+          ..Default::default()
+      }))
+
+    // Trigger loading on global attributes, backend setup
+    // .add_systems()
+
+    // Initialize our global states and sub-systems (Plugins)
+
+    ;
 }

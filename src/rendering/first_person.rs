@@ -66,7 +66,7 @@ pub fn render_debug_map(
 
     commands.spawn(PbrBundle{
         mesh: meshes.add(Cuboid::new(2.,2.,2.)),
-        material: materials.add(Color::rgb_u8(200, 0, 200)),
+        material: materials.add(Color::srgb_u8(200, 0, 200)),
         ..default()
     });
 
@@ -75,7 +75,7 @@ pub fn render_debug_map(
         for y in 0..dim_y {
             commands.spawn(PbrBundle {
                 mesh: meshes.add(Rectangle::new(SCALE - (SCALE*0.1), SCALE - (SCALE*0.1))),
-                material: materials.add(Color::rgb_u8(200, 200, 0)),
+                material: materials.add(Color::srgb_u8(200, 200, 0)),
                 transform: Transform::from_xyz(SCALE * x as f32, 0.0, SCALE * y as f32)
                                     .with_rotation(Quat::from_rotation_x(270. * PI / 180. )), 
                 ..default()
@@ -99,7 +99,7 @@ pub fn render_debug_map(
             // Wall was found, spawn and render
             commands.spawn(PbrBundle{
                 mesh: meshes.add(Cuboid::new(0.2,SCALE,SCALE)),
-                material: materials.add(Color::rgb_u8(70, 0, 200)),
+                material: materials.add(Color::srgb_u8(70, 0, 200)),
                 transform: Transform::from_xyz(SCALE * x as f32  - SCALE/2., SCALE/2., SCALE * h as f32)
                                     .with_rotation(Quat::from_rotation_x(270. * PI / 180. )), 
                 ..default()
@@ -117,7 +117,7 @@ pub fn render_debug_map(
             // Wall was found, spawn and render - change color accordingly if we can
             commands.spawn(PbrBundle{
                 mesh: meshes.add(Cuboid::new(SCALE,SCALE,0.2)),
-                material: materials.add(Color::rgb_u8(70, 0, 200)),
+                material: materials.add(Color::srgb_u8(70, 0, 200)),
                 transform: Transform::from_xyz(SCALE * y as f32, SCALE/2., SCALE * v as f32 - SCALE/2.)
                                     .with_rotation(Quat::from_rotation_x(0. )), 
                 ..default()
@@ -159,7 +159,7 @@ pub fn grid_rotation(
 pub fn exploration_movement(
     keys: Res<ButtonInput<KeyCode>>,
     mut query: Query<(&mut Camera, &mut Transform)>,
-    // Handle distance to travel depending on the context?
+    map_data: Res<CurrMap>,
 ){
     // Depending on which input is obtained, call support function
     if keys.any_just_pressed([KeyCode::KeyA, KeyCode::KeyD]){
@@ -183,8 +183,9 @@ pub fn exploration_movement(
         // Trigger grid movement - If more than one button is pressed though...
         for(mut options, mut transform) in query.iter_mut() {
             if keys.just_pressed(KeyCode::KeyW){
+                // Check to see if there's a wall blocking the way (Or edge of map) - if there is, could do a 'move-bonk' to indicate it's a dead end
                 // Forward 1 unit
-                // May need the Timer - refer to https://docs.rs/bevy/latest/bevy/transform/components/struct.Transform.html#method.forward
+                // May need the Timer for 'smooth' movement - refer to https://docs.rs/bevy/latest/bevy/transform/components/struct.Transform.html#method.forward
                 // transform.forward()
             }  
             else if keys.just_pressed(KeyCode::KeyS){

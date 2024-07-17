@@ -5,6 +5,7 @@
 
 // #![allow(unused)]
 
+use bevy::color::palettes::tailwind;
 use bevy::ecs::world;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
@@ -130,7 +131,7 @@ pub fn mouse_behavior(
 
                 // Spawn the wall sprite with DragLine component
                 commands.spawn((SpriteBundle{
-                    sprite: Sprite { color: Color::ANTIQUE_WHITE, custom_size: (Some(Vec2::new(1.0,1.0))), ..Default::default() },
+                    sprite: Sprite { color:  tailwind::NEUTRAL_500.into(), custom_size: (Some(Vec2::new(1.0,1.0))), ..Default::default() },
                     visibility: Visibility::Visible,
                     transform: Transform {
                         translation: Vec2::new(start_x.round(), start_y.round()).extend(5.0),
@@ -240,10 +241,10 @@ pub fn coordinate_conv(
     GUI Menu section - This is mainly for rendering and interactivity of the GUI menu, along with defining a few constants. 
 */
 
-const NORMAL_BUTTON: Color = Color::GRAY;
-const HOVERED_BUTTON: Color = Color::DARK_GRAY;
-const HOVERED_PRESSED: Color = Color::DARK_GREEN;
-const PRESSED_BUTTON: Color = Color::GREEN;
+const NORMAL_BUTTON: Srgba = tailwind::ZINC_500;
+const HOVERED_BUTTON: Srgba = tailwind::ZINC_900;
+const HOVERED_PRESSED: Srgba = tailwind::ZINC_50;
+const PRESSED_BUTTON: Srgba = tailwind::ZINC_50;
 
 
 // This function draws the Menu UI/UX
@@ -285,7 +286,7 @@ pub fn draw_mb_menu(
                 bottom: Val::Px(0.),
                 ..Default::default()
             },
-            background_color: Color::SEA_GREEN.into(),
+            background_color:  tailwind::EMERALD_300.into(),
             ..Default::default()
         })
         .with_children(|parent|{
@@ -296,7 +297,7 @@ pub fn draw_mb_menu(
             .spawn((ButtonBundle
                 {
                     style: btn_style.clone(),
-                    background_color: Color::GRAY.into(),
+                    background_color: tailwind::EMERALD_300.into(),
                     ..Default::default()
                 },
                 MBMenuButtonAction::Save,
@@ -311,7 +312,7 @@ pub fn draw_mb_menu(
             .spawn((ButtonBundle
                 {
                     style: btn_style.clone(),
-                    background_color: Color::GRAY.into(),
+                    background_color: tailwind::EMERALD_300.into(),
                     ..Default::default()
                 },
                 MBMenuButtonAction::Load,

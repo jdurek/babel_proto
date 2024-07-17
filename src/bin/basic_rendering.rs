@@ -73,7 +73,7 @@ fn main() {
             ..Default::default()
         }))
     .add_systems(Startup, camera_setup)
-    .add_systems(Startup, init_resources)
+    .add_systems(PreStartup, init_resources)
 
     .insert_state(MapState::DebugMap)
 

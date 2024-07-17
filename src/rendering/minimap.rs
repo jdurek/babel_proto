@@ -7,7 +7,7 @@
 
 #![allow(unused)]
 
-use bevy::prelude::*;
+use bevy::{color::palettes::tailwind, prelude::*};
 use crate::data_structs::map_data::{self, *}; 
 
 
@@ -48,7 +48,7 @@ pub fn draw_2d_map(
             // map.map_data.get_tile(x, y);
             
             commands.spawn((SpriteBundle{
-                sprite: Sprite { color: Color::TURQUOISE, custom_size: (Some(Vec2::new(1.0,1.0))), ..Default::default() },
+                sprite: Sprite { color: tailwind::CYAN_300.into(), custom_size: (Some(Vec2::new(1.0,1.0))), ..Default::default() },
                 visibility: Visibility::Visible,
                 transform: Transform {
                     translation: Vec2::new(x as f32 * grid_scale + center.x, y as f32 * grid_scale + center.y).extend(0.0),
@@ -72,7 +72,7 @@ pub fn draw_2d_map(
                 continue;
             }
             commands.spawn((SpriteBundle{
-                sprite: Sprite {color: Color::ANTIQUE_WHITE, ..Default::default()},
+                sprite: Sprite {color: tailwind::NEUTRAL_50.into(), ..Default::default()},
                 visibility: Visibility::Visible,
                 transform: Transform {
                     // Translation is offset from center of sprite to bottom left corner - 
@@ -95,7 +95,7 @@ pub fn draw_2d_map(
                 continue;
             }
             commands.spawn((SpriteBundle{
-                sprite: Sprite {color: Color::ANTIQUE_WHITE, ..Default::default()},
+                sprite: Sprite {color: tailwind::NEUTRAL_50.into(), ..Default::default()},
                 visibility: Visibility::Visible,
                 transform: Transform {
                     // Translation is offset from center of sprite to bottom left corner - 
