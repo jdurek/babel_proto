@@ -13,4 +13,4 @@ rfd = "~0.14"
 serde = "1.0.197"
 serde_json = "~1.0"
 sqlite = "0.34.0"
-sickle_ui = { git = "https://github.com/UmbraLuminosa/sickle_ui" }
+sickle_ui = "0.2.1"

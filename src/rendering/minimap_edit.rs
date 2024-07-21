@@ -9,6 +9,7 @@ use bevy::color::palettes::tailwind;
 use bevy::ecs::world;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
+use sickle_ui::prelude::*;
 use crate::data_structs::map_data::*; 
 use crate::rendering::minimap::*;
 use crate::states::MapState;
@@ -274,56 +275,99 @@ pub fn draw_mb_menu(
         ..default()
     };
 
-    // Spawns in the menu - Root contains N buttons, button nodes contain text and possibly images
-    commands
-        .spawn(NodeBundle{
-            style: Style {
-                flex_direction: FlexDirection::Column,      // Forces the children buttons into a column config
-                align_items: AlignItems::Center,
-                position_type: PositionType::Absolute,
-                left: Val::Px(0.),
-                top: Val::Px(0.),
-                bottom: Val::Px(0.),
-                ..Default::default()
+    // Spawning in the menu with Sickle_UI to familiarize myself with it
+    commands.ui_builder(UiRoot).column(|column|{
+        // Title section (On it's own row or something?)
+        column.menu_item(MenuItemConfig {
+            name: "SAVE MAP".into(),
+            ..default()
+        }).insert(MBMenuButtonAction::Save);
+        column.menu_item(MenuItemConfig {
+            name: "LOAD MAP".into(),
+            ..default()
+        }).insert(MBMenuButtonAction::Load);
+
+        
+        column.menu(
+            MenuConfig {
+                name: "Menu".into(),
+                alt_code: KeyCode::KeyM.into(),
+                ..default()
             },
-            background_color:  tailwind::EMERALD_300.into(),
-            ..Default::default()
-        })
-        .with_children(|parent|{
-            // MB Menu Title
+            |menu| {
+                menu.menu_item(MenuItemConfig {
+                    name: "SAVE MAP".into(),
+                    ..default()
+                });
+                menu.menu_item(MenuItemConfig {
+                    name: "LOAD MAP".into(),
+                    ..default()
+                });
+                menu.menu_item(MenuItemConfig{
+                    name: "NEW MAP".into(),
+                    ..default()
+                });
+            }
+        );
 
-            // Save Button
-            parent
-            .spawn((ButtonBundle
-                {
-                    style: btn_style.clone(),
-                    background_color: tailwind::EMERALD_300.into(),
-                    ..Default::default()
-                },
-                MBMenuButtonAction::Save,
-            ))
-            .with_children(|parent| {
-                parent.spawn(TextBundle::from_section("Save Map", btn_text_style.clone(),
-                ));
-            });
 
-            // Load Button
-            parent
-            .spawn((ButtonBundle
-                {
-                    style: btn_style.clone(),
-                    background_color: tailwind::EMERALD_300.into(),
-                    ..Default::default()
-                },
-                MBMenuButtonAction::Load,
-            ))
-            .with_children(|parent| {
-                parent.spawn(TextBundle::from_section("Load Map", btn_text_style.clone(),
-                ));
-            });
-        })
-           
+    })
+    .style(
+
+    )
+    .background_color(tailwind::EMERALD_300.into())
     ;
+
+    // Spawns in the menu - Root contains N buttons, button nodes contain text and possibly images
+    // commands
+    //     .spawn(NodeBundle{
+    //         style: Style {
+    //             flex_direction: FlexDirection::Column,      // Forces the children buttons into a column config
+    //             align_items: AlignItems::Center,
+    //             position_type: PositionType::Absolute,
+    //             left: Val::Px(0.),
+    //             top: Val::Px(0.),
+    //             bottom: Val::Px(0.),
+    //             ..Default::default()
+    //         },
+    //         background_color:  tailwind::EMERALD_300.into(),
+    //         ..Default::default()
+    //     })
+    //     .with_children(|parent|{
+    //         // MB Menu Title
+
+    //         // Save Button
+    //         parent
+    //         .spawn((ButtonBundle
+    //             {
+    //                 style: btn_style.clone(),
+    //                 background_color: tailwind::EMERALD_300.into(),
+    //                 ..Default::default()
+    //             },
+    //             MBMenuButtonAction::Save,
+    //         ))
+    //         .with_children(|parent| {
+    //             parent.spawn(TextBundle::from_section("Save Map", btn_text_style.clone(),
+    //             ));
+    //         });
+
+    //         // Load Button
+    //         parent
+    //         .spawn((ButtonBundle
+    //             {
+    //                 style: btn_style.clone(),
+    //                 background_color: tailwind::EMERALD_300.into(),
+    //                 ..Default::default()
+    //             },
+    //             MBMenuButtonAction::Load,
+    //         ))
+    //         .with_children(|parent| {
+    //             parent.spawn(TextBundle::from_section("Load Map", btn_text_style.clone(),
+    //             ));
+    //         });
+    //     })
+           
+    // ;
 
 
 

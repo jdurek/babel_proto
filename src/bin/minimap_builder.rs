@@ -5,6 +5,7 @@
 #![allow(unused)]
 
 use bevy::render::{camera, view::RenderLayers};
+use sickle_ui::{prelude::*, SickleUiPlugin};
 
 mod prelude {
     pub use bevy::prelude::*;
@@ -54,6 +55,8 @@ fn main() {
             }),
             ..Default::default()
         }))
+    .add_plugins(SickleUiPlugin)
+
     .add_systems(Startup, camera_setup)
     .add_systems(Startup, init_resources)
     .add_systems(Startup, draw_mb_menu)
