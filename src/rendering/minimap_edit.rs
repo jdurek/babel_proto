@@ -18,6 +18,7 @@ use crate::states::MapState;
 use rfd::FileDialog;
 use std::fs::*;
 use std::io::*;
+use std::path::Path;
 
 
 // Simple states for the map_builder loop - only needed by the map_builder tool at the moment, which is why it's only kept in here
@@ -278,6 +279,7 @@ pub fn draw_mb_menu(
     // Spawning in the menu with Sickle_UI to familiarize myself with it
     commands.ui_builder(UiRoot).column(|column|{
         // Title section (On it's own row or something?)
+        
         column.menu_item(MenuItemConfig {
             name: "SAVE MAP".into(),
             ..default()
@@ -285,9 +287,13 @@ pub fn draw_mb_menu(
         column.menu_item(MenuItemConfig {
             name: "LOAD MAP".into(),
             ..default()
-        }).insert(MBMenuButtonAction::Load);
-
+        })
+        .insert(MBMenuButtonAction::Load)
+        .style()
+        ;
         
+        
+
         column.menu(
             MenuConfig {
                 name: "Menu".into(),
@@ -312,9 +318,9 @@ pub fn draw_mb_menu(
 
 
     })
-    .style(
-
-    )
+    .style()
+    // TODO - fix the assets folder (or pathing - this hard-path isn't great)
+    .image(ImageSource::Path(("..\\src\\assets\\images\\MegaOrby.png".into())))
     .background_color(tailwind::EMERALD_300.into())
     ;
 
