@@ -279,6 +279,21 @@ pub fn draw_mb_menu(
     // Spawning in the menu with Sickle_UI to familiarize myself with it
     commands.ui_builder(UiRoot).column(|column|{
         // Title section (On it's own row or something?)
+        column.container(
+            (
+                NodeBundle{
+                    style: Style{
+                        width: Val::Px(50.0),
+                        height: Val::Px(50.0),
+                        margin: UiRect::top(Val::VMin(5.)),
+                        ..default()
+                    },
+                    ..default()
+                },
+                UiImage::new(asset_server.load("..\\src\\assets\\images\\MegaOrby.png"))
+            ), |container|{
+
+            });
         
         column.menu_item(MenuItemConfig {
             name: "SAVE MAP".into(),
@@ -320,7 +335,7 @@ pub fn draw_mb_menu(
     })
     .style()
     // TODO - fix the assets folder (or pathing - this hard-path isn't great)
-    .image(ImageSource::Path(("..\\src\\assets\\images\\MegaOrby.png".into())))
+    // .image(ImageSource::Path(("..\\src\\assets\\images\\MegaOrby.png".into())))
     .background_color(tailwind::EMERALD_300.into())
     ;
 
