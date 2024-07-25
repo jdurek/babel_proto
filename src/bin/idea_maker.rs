@@ -19,9 +19,24 @@ mod prelude {
     pub use babel_proto::rendering::first_person::*;
     pub use babel_proto::rendering::debug_camera::*;
     pub use babel_proto::states::*;
+    pub use babel_proto::rendering::maker_sim_menus::*;
 }
 
 use prelude::*;
+
+#[derive(Component)]
+struct MapCamera;
+
+fn camera_setup(mut commands: Commands){
+  let mut camera = Camera2dBundle::default();
+  camera.projection.scale = 0.5;
+  
+  // Camera starts pointed at 0,0 coordinate (Middle of screen)
+  // camera.transform.translation.x += 1280.0 / 4.0;
+  // camera.transform.translation.y += 720.0 / 4.0;
+  
+  commands.spawn((camera, MapCamera, RenderLayers::from_layers(&[0, 2])));
+}
 
 fn main(){
   // Main app flow - 
@@ -39,10 +54,13 @@ fn main(){
           ..Default::default()
       }))
 
+    
+    .add_systems(Startup, (draw_makermenu, camera_setup))
+
     // Trigger loading on global attributes, backend setup
     // .add_systems()
 
     // Initialize our global states and sub-systems (Plugins)
 
-    ;
+    .run();
 }

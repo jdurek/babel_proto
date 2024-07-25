@@ -17,6 +17,7 @@ pub mod minimap;
 pub mod game_menus;
 pub mod minimap_edit;
 pub mod debug_camera;
+pub mod maker_sim_menus;
 
 pub use minimap::*;
 
