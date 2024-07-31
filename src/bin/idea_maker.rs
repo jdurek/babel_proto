@@ -23,7 +23,8 @@ mod prelude {
 }
 
 use prelude::*;
-use sickle_ui::SickleUiPlugin;
+use sickle_ui::{prelude::UiRoot, SickleUiPlugin, 
+  theme::{PseudoTheme, Theme}, widgets::inputs::radio_group::RadioButton};
 
 #[derive(Component)]
 struct MapCamera;
@@ -37,6 +38,29 @@ fn camera_setup(mut commands: Commands){
   // camera.transform.translation.y += 720.0 / 4.0;
   
   commands.spawn((camera, MapCamera, RenderLayers::from_layers(&[0, 2])));
+}
+
+// Theme override method (Temp location while testing)
+// Seems promising so far - just need to figure out how much the override involves.
+fn theme_setup(
+  // q_root: Query<Entity, With<UiRoot>>, // TODO - figuyrue out the query section here
+  mut commands: Commands) 
+{
+  // let root = q_root.get_single().unwrap();
+
+  // Theme for selected radio button (Includes focus/highlight)
+  let radio_sel = PseudoTheme::<RadioButton>::deferred(None, |style_builder, data| {
+    style_builder.background_color(Color::BLACK);
+  });
+
+  // Theme for unselected radio button
+  let radio_unsel = PseudoTheme::<RadioButton>::deferred(None, |style_builder, data| {
+    style_builder.background_color(Color::BLACK);
+  });
+
+
+  // commands.entity(root).insert((Theme::<RadioButton>::new(vec![radio_sel, radio_unsel])));
+
 }
 
 fn main(){
