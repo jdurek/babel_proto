@@ -23,6 +23,7 @@ mod prelude {
 }
 
 use prelude::*;
+use sickle_ui::SickleUiPlugin;
 
 #[derive(Component)]
 struct MapCamera;
@@ -53,7 +54,7 @@ fn main(){
           }),
           ..Default::default()
       }))
-
+    .add_plugins(SickleUiPlugin)
     
     .add_systems(Startup, (draw_makermenu, camera_setup))
 

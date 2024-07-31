@@ -45,6 +45,10 @@ pub fn draw_makermenu(
                 );
             });
 
+
+            // TODO - Figure out why the radio buttons aren't showing up - doesn't seem to require extra_menu?
+            // Might be import-related, or just something I'm overlooking.
+            
             // Upper section - group of buttons with Radio behavior
             column.row(|row|{
                 row.menu_bar(|bar|{
@@ -58,6 +62,7 @@ pub fn draw_makermenu(
                 .height(Val::Percent((49.)))
             ;
 
+            
 
             // Lower section - group of buttons with Radio behavior
             column.row(|row|{
