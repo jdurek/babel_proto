@@ -19,7 +19,7 @@ pub mod minimap_edit;
 pub mod debug_camera;
 pub mod maker_sim_menus;
 
-// pub mod sickle_widgets;
+pub mod sickle_widgets;
 
 pub use minimap::*;
 

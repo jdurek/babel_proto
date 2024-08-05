@@ -1,12 +1,17 @@
 use bevy::{prelude::*, ui::FocusPolicy};
 
-use sickle_macros::UiContext;
-use sickle_ui_scaffold::prelude::*;
+use sickle_ui::prelude::*;
 
-use crate::widgets::layout::{
-    container::UiContainerExt,
-    label::{LabelConfig, UiLabelExt},
-};
+// seems prelude::* import negates the need for these lines
+// use sickle_macros::UiContext;
+// use sickle_ui_scaffold::prelude::*;
+
+// use crate::widgets::layout::{
+//     container::UiContainerExt,
+//     label::{LabelConfig, UiLabelExt},
+// };
+
+
 
 /*
     Tweaked RadioGroup from Sickle_UI to form it's own widget
