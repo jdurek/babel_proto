@@ -23,8 +23,12 @@ mod prelude {
 }
 
 use prelude::*;
-use sickle_ui::{prelude::UiRoot, SickleUiPlugin, 
-  theme::{PseudoTheme, Theme}, widgets::inputs::radio_group::RadioButton};
+use sickle_ui::{
+  prelude::*, 
+  SickleUiPlugin, 
+  theme::{PseudoTheme, Theme}, 
+  widgets::inputs::radio_group::RadioButton,
+};
 
 #[derive(Component)]
 struct MapCamera;
@@ -43,23 +47,23 @@ fn camera_setup(mut commands: Commands){
 // Theme override method (Temp location while testing)
 // Seems promising so far - just need to figure out how much the override involves.
 fn theme_setup(
-  // q_root: Query<Entity, With<UiRoot>>, // TODO - figuyrue out the query section here
+  q_root: Query<Entity, With<UiContextRoot>>, // TODO - figuyrue out the query section here
   mut commands: Commands) 
 {
-  // let root = q_root.get_single().unwrap();
+  let root_entity = q_root.get_single().unwrap();
 
   // Theme for selected radio button (Includes focus/highlight)
   let radio_sel = PseudoTheme::<RadioButton>::deferred(None, |style_builder, data| {
-    style_builder.background_color(Color::BLACK);
+    // style_builder.background_color(Color::BLACK);
   });
 
   // Theme for unselected radio button
   let radio_unsel = PseudoTheme::<RadioButton>::deferred(None, |style_builder, data| {
-    style_builder.background_color(Color::BLACK);
+    // style_builder.background_color(Color::WHITE);
   });
 
 
-  // commands.entity(root).insert((Theme::<RadioButton>::new(vec![radio_sel, radio_unsel])));
+  commands.entity(root_entity).insert((Theme::<RadioButton>::new(vec![radio_sel, radio_unsel])));
 
 }
 
@@ -79,9 +83,9 @@ fn main(){
           ..Default::default()
       }))
     .add_plugins(SickleUiPlugin)
-    
-    .add_systems(Startup, (draw_makermenu, camera_setup))
 
+    .add_systems(Startup, (draw_makermenu, camera_setup))
+    .add_systems(PostStartup, theme_setup)
     // Trigger loading on global attributes, backend setup
     // .add_systems()
 

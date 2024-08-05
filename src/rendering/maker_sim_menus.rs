@@ -72,6 +72,7 @@ pub fn draw_makermenu(
                 .height(Val::Percent((49.)))
             ;
         })
+        .insert(UiContextRoot)
         .style()
         .width(Val::Percent((100.)))
         .height(Val::Percent((100.)))
