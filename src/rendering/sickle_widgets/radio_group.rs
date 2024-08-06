@@ -374,11 +374,12 @@ impl ButtonRadioButton {
 }
 
 pub trait UiButtonRadioGroupExt {
-    fn radio_group(
+    fn button_radio_group(
         &mut self,
         options: Vec<impl Into<String>>,
         selected: impl Into<Option<usize>>,
         unselectable: bool,
+        // group: Entity,
     ) -> UiBuilder<Entity>;
 }
 
@@ -387,11 +388,12 @@ impl UiButtonRadioGroupExt for UiBuilder<'_, Entity> {
     ///
     /// ### PseudoState usage
     /// - `PseudoState::Checked` is added to the currently selected `ButtonRadioButton` entity
-    fn radio_group(
+    fn button_radio_group(
         &mut self,
         options: Vec<impl Into<String>>,
         selected: impl Into<Option<usize>>,
         unselectable: bool,
+        // group: Entity,
     ) -> UiBuilder<Entity> {
         let mut radio_group = self.spawn((
             ButtonRadioGroup::container(),
@@ -404,7 +406,8 @@ impl UiButtonRadioGroupExt for UiBuilder<'_, Entity> {
         let group = radio_group.id();
         for option in options {
             let label = option.into();
-            let name = format!("Radio Button [{}]", label);
+            // let label = "DESPAIR".into();
+            let name = format!("Button Radio Button [{}]", label);
             let mut radio_button = ButtonRadioButton {
                 checked: false,
                 unselectable,
@@ -415,12 +418,14 @@ impl UiButtonRadioGroupExt for UiBuilder<'_, Entity> {
 
             radio_group
                 .container(ButtonRadioButton::button(name), |button| {
+                    
                     radio_button.radiomark_background = button
                         .container(ButtonRadioButton::radio_mark_background(), |radio_mark_bg| {
                             radio_button.radiomark =
                                 radio_mark_bg.spawn(ButtonRadioButton::radio_mark()).id();
                         })
                         .id();
+
                     radio_button.label = button.label(LabelConfig { label, ..default() }).id();
                 })
                 .insert(radio_button);

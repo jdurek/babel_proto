@@ -20,6 +20,7 @@ mod prelude {
     pub use babel_proto::rendering::debug_camera::*;
     pub use babel_proto::states::*;
     pub use babel_proto::rendering::maker_sim_menus::*;
+    pub use babel_proto::rendering::sickle_widgets::*;
 }
 
 use prelude::*;
@@ -29,6 +30,9 @@ use sickle_ui::{
   theme::{PseudoTheme, Theme}, 
   widgets::inputs::radio_group::RadioButton,
 };
+
+pub use babel_proto::rendering::sickle_widgets::radio_group::{ButtonRadioGroup, UiButtonRadioGroupExt};
+
 
 #[derive(Component)]
 struct MapCamera;
@@ -83,9 +87,10 @@ fn main(){
           ..Default::default()
       }))
     .add_plugins(SickleUiPlugin)
+    .add_plugins(CustomWidgetPlugin)
 
     .add_systems(Startup, (draw_makermenu, camera_setup))
-    .add_systems(PostStartup, theme_setup)
+    // .add_systems(PostStartup, theme_setup)
     // Trigger loading on global attributes, backend setup
     // .add_systems()
 

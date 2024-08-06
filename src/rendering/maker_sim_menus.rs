@@ -8,6 +8,8 @@
 use bevy::prelude::*;
 use sickle_ui::prelude::*;
 
+use super::sickle_widgets::radio_group::*;
+
 #[derive(Component, Debug)]
 pub struct MorningSwitch;
 
@@ -66,7 +68,7 @@ pub fn draw_makermenu(
 
             // Lower section - group of buttons with Radio behavior
             column.row(|row|{
-                row.radio_group(vec!["PHYS", "IDEA", "GUILD"], 0, false)
+                row.button_radio_group(vec!["PHYS", "IDEA", "GUILD"], 0, false)
                 .insert(AfternoonSwitch);
             }).style()
                 .height(Val::Percent((49.)))
