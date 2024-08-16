@@ -5,6 +5,8 @@
 
  // Typically, the player will always start within this menu/state when not on an expedition.
 
+use std::thread::spawn;
+
 use bevy::prelude::*;
 use sickle_ui::prelude::*;
 
@@ -32,6 +34,13 @@ pub fn draw_makermenu(
     asset_server: Res<AssetServer>,
 )
 {
+    // Need to figure out how to spawn an ID/entity value...
+    let radio_group_a = commands.spawn(
+        ButtonRadioGroup { selected: Some((0))}
+    ).id();
+
+
+
     // General layout - Split the screen into a top row and two main sections
     commands.ui_builder(UiRoot)
         .column(|column|{
@@ -68,7 +77,14 @@ pub fn draw_makermenu(
 
             // Lower section - group of buttons with Radio behavior
             column.row(|row|{
-                row.button_radio_group(vec!["PHYS", "IDEA", "GUILD"], 0, false)
+                row.button_radio_group(vec!["PHYS", "IDEA", "GUILD"], 0, false, radio_group_a)
+                .insert(AfternoonSwitch);
+            }).style()
+                .height(Val::Percent((49.)))
+            ;
+
+            column.row(|row|{
+                row.button_radio_group(vec!["GUILE", "DESPAIR", "ANGER"], 0, false, radio_group_a)
                 .insert(AfternoonSwitch);
             }).style()
                 .height(Val::Percent((49.)))

@@ -231,6 +231,8 @@ impl ButtonRadioButton {
         Theme::new(vec![base_theme, checked_theme])
     }
 
+
+    // Reminder to other devs - edit BOTH style sections
     fn primary_style(style_builder: &mut StyleBuilder, theme_data: &ThemeData) {
         let theme_spacing = theme_data.spacing;
         let colors = theme_data.colors();
@@ -379,7 +381,7 @@ pub trait UiButtonRadioGroupExt {
         options: Vec<impl Into<String>>,
         selected: impl Into<Option<usize>>,
         unselectable: bool,
-        // group: Entity,
+        group: Entity,
     ) -> UiBuilder<Entity>;
 }
 
@@ -393,7 +395,7 @@ impl UiButtonRadioGroupExt for UiBuilder<'_, Entity> {
         options: Vec<impl Into<String>>,
         selected: impl Into<Option<usize>>,
         unselectable: bool,
-        // group: Entity,
+        group: Entity,
     ) -> UiBuilder<Entity> {
         let mut radio_group = self.spawn((
             ButtonRadioGroup::container(),
@@ -403,7 +405,7 @@ impl UiButtonRadioGroupExt for UiBuilder<'_, Entity> {
         ));
 
         let mut index = 0;
-        let group = radio_group.id();
+        // let group = radio_group.id();
         for option in options {
             let label = option.into();
             // let label = "DESPAIR".into();
